@@ -1,0 +1,25 @@
+body {
+    display: grid;
+    margin: 0;
+    height: 100%;
+    /* Top uses its height, bottom takes remaining */
+    grid-template-rows: auto 1fr;
+    /* Left | Middle | Right */
+    grid-template-columns: 20% 1fr 20%;
+}
+
+.top {
+    /* Span all columns */
+    grid-column: 1 / -1;
+    background: #333;
+}
+
+.left {
+    background: #DDD;
+}
+.middle {
+    background: white;
+}
+.right {
+    background: #DDD;
+}

@@ -1,4 +1,5 @@
 #!/bin/sh
-cat main.js | minify --type js > main.js
-minify main.html -o index.html
+cat src/main.js | minify --type js -o index.js
+minify base/main.html -o index.html
+minify base/main.css -o index.css
 echo "Finished building!"

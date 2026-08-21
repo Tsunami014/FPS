@@ -2,8 +2,8 @@
 A Hack club YSWS (You Ship We Ship) I plan on doing at some point
 
 ## Structure
-- `main.html` and all files in `src/` is the unbuilt webpage
-- It gets built to `index.html` and `main.js`
+- All files in `base/` and `src/` are the unbuilt webpage
+- It gets built to `index.html`, `index.css` and `index.js`
 
 ## Building
 Run `./build.sh`. You will need the `minify` package installed.
