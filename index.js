@@ -1,0 +1,1 @@
+function updateSel(e){const t=document.querySelector(".sel");t&&t.classList.remove("sel");const n=document.getElementById("top").querySelector(`a[href="${e||"#main"}"]`);n&&n.classList.add("sel")}updateSel(location.hash),navigation.addEventListener("navigate",()=>{const e=new URL(event.destination.url);updateSel(e.hash)})
