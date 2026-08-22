@@ -9,6 +9,8 @@ body {
     height: 100%;
     /* Top uses its height, bottom takes remaining */
     grid-template-rows: auto 1fr;
+}
+body:not(.mobile) {
     /* Side | Middle */
     grid-template-columns: 1fr 35%;
 }
@@ -19,7 +21,7 @@ body {
     padding: 5px;
     padding-top: 0;
 }
-#top, #side > header {
+#top {
     display: flex;
     flex-wrap: nowrap;
     overflow-x: auto;
@@ -54,7 +56,6 @@ body {
 
 
 #side > header {
-    justify-content: space-between;
     padding-left: 8px;
 }
 #side > :not(header) {
@@ -167,6 +168,7 @@ details[open] > summary::before { content: "● "; }
 .obj::before { content: "- "; }
 .obj_image::before { content: "🖼️ "; }
 .obj_object::before { content: "📦 "; }
+.obj_info::before { content: "ℹ️ "; }
 
 details.regular > summary::before { content: "› "; }
 details[open].regular > summary::before { content: "ᵛ "; }

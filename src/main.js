@@ -1,3 +1,14 @@
+function checkMobile() {
+    if (window.innerWidth < 500) {
+        document.body.classList.add('mobile');
+    } else {
+        document.body.classList.remove('mobile');
+    }
+}
+checkMobile();
+window.addEventListener('resize', checkMobile);
+
+
 function inspectElm(parent, data) {
     data.forEach(it=>{
         if (it.type) {
@@ -101,6 +112,12 @@ function updateTopSel(hash) {
     // Set active title
     const newsel = document.getElementById("top").querySelector(`a[href="${hash}"]`)
     if (newsel) newsel.classList.add("sel")
+
+    document.getElementById("inspector").replaceChildren()
+
+    // Instantly go to the scene
+    document.getElementById("side").className = "displscene"
+    updateLTabSel()
 
     const stage = document.getElementById("stage")
     stage.replaceChildren()

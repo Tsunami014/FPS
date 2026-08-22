@@ -6,7 +6,7 @@ import os
 import requests
 import config
 
-os.system("cat src/config.js src/user.js src/objs.js src/screens.js src/main.js | minify --type js -o build/index.js")
+os.system("cat src/user.js src/objs.js src/screens.js src/main.js | minify --type js -o build/index.js")
 os.system("minify base/main.html -o build/index.html")
 os.system("minify base/main.css -o build/index.css")
 print("Finished building!")
