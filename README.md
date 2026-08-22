@@ -5,8 +5,6 @@ A Hack club YSWS (You Ship We Ship) I plan on doing at some point
 - All files in `base/` and `src/` are the unbuilt webpage
 - It gets built to `index.html`, `index.css` and `index.js`
 
-## Building
-Run `./build.sh`. You will need the `minify` package installed.
+## Running
+You will need `minify` and `python` installed together and the `requests`, `flask` and `flask-limiter` python packages installed.
 
-### Testing
-You can test this locally by starting up a local web server, for example by using `python3 -m http.server`

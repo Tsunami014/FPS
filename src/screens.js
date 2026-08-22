@@ -1,5 +1,5 @@
 const SCREENS = {
-    home: [
+    main: [
         { labl: "Stage", open: true, conts: [
             (new TestObj("Test")).screenObj()
             { labl: "Hello", conts: [
