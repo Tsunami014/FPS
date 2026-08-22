@@ -44,6 +44,7 @@ function loadTree(tree, data) {
             elm.classList.add("obj")
             elm.classList.add(it.class)
             elm.innerText = it.labl
+            elm.onclick = gotoInspector
             tree.appendChild(elm)
         } else {
             const newtree = document.createElement("details")
@@ -58,9 +59,29 @@ function loadTree(tree, data) {
 }
 
 
-function updateSel(hash) {
+const ltabbtns = [
+    ["Scene", "displscene"],
+    ["Inspector", "displinsp"]
+]
+function updateLTabSel() {
+    // Remove selected if exists
+    const sel = document.querySelector('button.sel')
+    if (sel) sel.classList.remove("sel")
+    // Set new selected
+    const displ = document.getElementById("left").className
+    const elm = document.getElementById("lefttabs").children[ltabbtns.findIndex(it=>{ return it[1] == displ })]
+    if (elm) elm.classList.add("sel")
+}
+
+function gotoInspector() {
+    document.getElementById("left").className = "displinsp"
+    updateLTabSel()
+}
+
+
+function updateTopSel(hash) {
     // Remove selected element if already exists
-    const sel = document.querySelector('.sel')
+    const sel = document.querySelector('a.sel')
     if (sel) sel.classList.remove("sel")
     // Set active title
     const newsel = document.getElementById("top").querySelector(`a[href="${hash || "#main"}"]`)
@@ -79,10 +100,10 @@ function updateSel(hash) {
 }
 
 { // When the page loads
-    updateSel(location.hash)
-    const right = document.getElementById("right")
-    right.replaceChildren()
-    inspectElm(right, [
+    updateTopSel(location.hash)
+    const insp = document.getElementById("inspector")
+    insp.replaceChildren()
+    inspectElm(insp, [
         { labl: "Test", bubble: true, conts: [
             { labl: "Transform", conts: [
                 { labl: "Transform", type: "labl" },
@@ -90,9 +111,25 @@ function updateSel(hash) {
             ]},
         ]},
     ])
+    // Auto generate left tab buttons
+    const tabbar = document.getElementById("lefttabs")
+    const left = document.getElementById("left")
+    ltabbtns.forEach(it=>{
+        const btn = document.createElement("button")
+        btn.type = "button"
+        btn.classList.add("tab")
+        btn.innerText = it[0]
+        btn.onclick = ()=>{
+            left.className = it[1]
+            updateLTabSel()
+        }
+        tabbar.appendChild(btn)
+    })
+    left.className = ltabbtns[0][1]
+    updateLTabSel()
 }
 // When page navigation occurs
 navigation.addEventListener('navigate', ()=>{
     const url = new URL(event.destination.url)
-    updateSel(url.hash)
+    updateTopSel(url.hash)
 })

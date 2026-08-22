@@ -9,8 +9,8 @@ body {
     height: 100%;
     /* Top uses its height, bottom takes remaining */
     grid-template-rows: auto 1fr;
-    /* Left | Middle | Right */
-    grid-template-columns: 30% 1fr 30%;
+    /* Left | Middle */
+    grid-template-columns: 35% 1fr;
 }
 
 #top {
@@ -18,7 +18,8 @@ body {
     background: #333;
     padding: 5px;
     padding-top: 0;
-
+}
+#top, #left > header {
     display: flex;
     flex-wrap: nowrap;
     overflow-x: auto;
@@ -26,7 +27,7 @@ body {
 }
 
 #top > a {
-    background: #556;
+    background-color: #556;
     padding: 5px 10px;
     border-right: 5px #55E solid;
     font-size: 24px;
@@ -39,26 +40,48 @@ body {
 #top > a.sel {
     background: #887;
     border-right: 5px #DD5 solid;
-    color: white;
     font-weight: bold;
 }
 
-aside {
-    padding: 5px;
-    background: #DDD;
-}
-
 #left {
+    padding: 5px;
+    background: #AAA;
 }
-#right {
-}
-
-#middle {
+#main {
     background: white;
 }
 
 
-button:not(.obj) {
+#left > header {
+    justify-content: space-between;
+    padding-left: 8px;
+}
+#left > :not(header) { display: none; }
+#left.displscene > #scene, #left.displinsp > #inspector {
+    display: block;
+}
+#left > header > button {
+    border: none;
+    border-top-right-radius: 8px;
+    border-left: 5px #55E solid;
+    cursor: pointer;
+    padding: 5px 15px;
+    background-color: #99B;
+    margin-right: 8px;
+}
+#left > header > button.sel {
+    background: grey;
+    border-left: 5px #DD5 solid;
+    font-weight: bold;
+}
+#left > section {
+    padding: 5px;
+    background-color: grey;
+    border-radius: 5px;
+}
+
+
+button:not(.obj):not(.tab) {
     width: 100%;
     padding: 5px;
     margin: 5px 0;
@@ -68,14 +91,14 @@ button:not(.obj) {
     cursor: pointer;
     transition: color 0.2s ease, background-color 0.2s ease, translate 0.05s ease, box-shadow 0.05s ease;
 }
-button:not(.obj):hover {
-    background-color: #777;
+button:not(.obj):not(.tab):hover {
+    background-color: #888;
     color: white;
     box-shadow: 2px 2px rgba(0, 0, 0, .3);
     translate: -1px -1px;
 }
-button:not(.obj):active {
-    background-color: #555;
+button:not(.obj):not(.tab):active {
+    background-color: #676767;
     color: white;
     box-shadow: 1px 1px rgba(0, 0, 0, .3);
     translate: 0;
@@ -86,6 +109,7 @@ button:not(.obj):active {
     background-color: #BBB;
     margin: 5px 0;
     padding: 2px 5px;
+    border-radius: 2px;
 }
 .tree * { color: #222; }
 
@@ -104,7 +128,7 @@ summary:hover, .obj:hover {
     background-color: #AAA;
     border-radius: 4px;
 }
-details.regular > summary:hover { background-color: #CCC; }
+details.regular > summary:hover { background-color: #999; }
 
 /* Vertical connecting line */
 details::before {
