@@ -1,5 +1,14 @@
+function MachineID() {
+    let mid = localStorage.getItem('umid');
+    if (!mid) {
+        mid = crypto.randomUUID();
+        localStorage.setItem('umid', mid);
+    }
+    return mid;
+}
+
 function connectHT() {
-    window.location.href = `https://hackatime.hackclub.com/oauth/authorize?client_id=${HACKATIME_APP_UID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&response_type=code&scope=profile+read&state=${MachineID()}`;
+    window.location.href = `/api/login?id=${MachineID()}`;
 }
 
 (async () => {
@@ -11,18 +20,11 @@ function connectHT() {
             throw new Error("Incorrect state key!");
         }
 
-        const body = new URLSearchParams({
-            client_id: HACKATIME_APP_UID,
-            code: code,
-            redirect_uri: REDIRECT_URI,
-        });
-
         const response = await fetch("/api/token", {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: body.toString()
+            body: (new URLSearchParams({ code: code })).toString()
         });
-
         if (!response.ok) {
             throw new Error(`HTTP error! Status: ${response.status}`);
         }
@@ -35,3 +37,7 @@ function connectHT() {
         history.replaceState({}, "", url);
     }
 })()
+
+function loggedIn() {
+    return localStorage.getItem('hackatime_token') !== null
+}

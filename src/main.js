@@ -37,8 +37,6 @@ function inspectElm(parent, data) {
     })
 }
 
-var selecting;
-
 function loadTree(tree, data) {
     data.forEach(it=>{
         if (it.class) {
