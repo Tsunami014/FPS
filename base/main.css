@@ -10,7 +10,7 @@ body {
     /* Top uses its height, bottom takes remaining */
     grid-template-rows: auto 1fr;
     /* Left | Middle | Right */
-    grid-template-columns: 20% 1fr 30%;
+    grid-template-columns: 30% 1fr 30%;
 }
 
 #top {
@@ -60,7 +60,8 @@ aside {
 button {
     width: 100%;
     padding: 5px;
-    background: #DDD;
+    margin: 5px 0;
+    background: #CCC;
     border: 2px black solid;
     border-radius: 8px;
     cursor: pointer;
@@ -77,4 +78,59 @@ button:active {
     color: white;
     box-shadow: 1px 1px rgba(0, 0, 0, .3);
     translate: 0;
+}
+
+
+.tree {
+    background-color: #BBB;
+    margin: 5px 0;
+    padding: 2px 5px;
+}
+.tree * { color: #222; }
+
+.tree details, .tree .obj {
+    padding-left: 10px;
+    margin: 5px 0;
+    position: relative;
+}
+.tree summary, .tree .obj {
+    padding: 1px;
+}
+.tree summary:hover, .tree .obj:hover {
+    background-color: #AAA;
+    border-radius: 2px;
+}
+
+/* Vertical connecting line */
+.tree details::before {
+    content: "";
+    position: absolute;
+    top: 22px;
+    bottom: 0;
+    left: 2px;
+    border-left: 2px solid #222;
+}
+.tree details:not([open])::before { display: none; }
+
+.tree summary {
+    cursor: pointer;
+    font-weight: bold;
+    margin-left: -10px;
+    list-style: none; /* Removes the default triangle */
+}
+/* For ew Safari users */
+.tree summary::-webkit-details-marker { display: none; }
+
+/* Custom open/close icons */
+/* Icons for potential future use: ◌ ◎ */
+.tree details > summary::before, .tree .obj::before {
+    content: "○ ";
+    white-space: pre-wrap;
+    display: inline-block;
+}
+.tree details[open] > summary::before { content: "● "; }
+.tree .obj::before { content: "🖼️ "; }
+
+.tree .obj {
+    cursor: pointer;
 }
