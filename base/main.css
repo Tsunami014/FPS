@@ -1,6 +1,6 @@
 * {
     font-family: monospace;
-    font-size: 16px;
+    font-size: 18px;
 }
 
 body {
@@ -57,6 +57,7 @@ aside {
     background: white;
 }
 
+
 button:not(.obj) {
     width: 100%;
     padding: 5px;
@@ -88,57 +89,67 @@ button:not(.obj):active {
 }
 .tree * { color: #222; }
 
-.tree details, .tree .obj {
+details, .obj, .item {
     padding-left: 10px;
     margin-top: 5px;
     position: relative;
 }
-.tree > details, .tree details[open] { margin-bottom: 5px; }
-.tree details[open] { padding-bottom: 5px; }
+.tree > details, details[open] { margin-bottom: 5px; }
+details[open] { padding-bottom: 5px; }
 
-.tree summary, .tree .obj {
-    padding: 1px;
+summary, .obj, .item {
+    padding: 3px 2px;
 }
-.tree summary:hover, .tree .obj:hover {
+summary:hover, .obj:hover {
     background-color: #AAA;
-    border-radius: 2px;
+    border-radius: 4px;
 }
+details.regular > summary:hover { background-color: #CCC; }
 
 /* Vertical connecting line */
-.tree details::before {
+details::before {
     content: "";
     position: absolute;
-    top: 22px;
+    top: 28px;
     bottom: 0;
     left: 2px;
     border-left: 2px solid #222;
 }
-.tree details:not([open])::before { display: none; }
+details:not([open])::before { display: none; }
 
-.tree summary {
+summary {
     cursor: pointer;
     font-weight: bold;
     margin-left: -10px;
     list-style: none; /* Removes the default triangle */
 }
 /* For ew Safari users */
-.tree summary::-webkit-details-marker { display: none; }
+summary::-webkit-details-marker { display: none; }
 
 /* Custom open/close icons */
 /* Icons for potential future use: ◌ ◎ */
-.tree details > summary::before, .tree .obj::before {
+details > summary::before, .obj::before {
     content: "○ ";
     white-space: pre-wrap;
     display: inline-block;
 }
-.tree details[open] > summary::before { content: "● "; }
-.tree .obj::before { content: "- "; }
-.tree .obj.image::before { content: "🖼️ "; }
+details[open] > summary::before { content: "● "; }
+.obj::before { content: "- "; }
+.obj.image::before { content: "🖼️ "; }
 
-.tree .obj {
+details.regular > summary::before { content: "› "; }
+details[open].regular > summary::before { content: "ᵛ "; }
+
+.obj {
     cursor: pointer;
     border: none;
     background-color: transparent;
     width: 100%;
     text-align: left;
+}
+.bubble {
+    padding: 6px 8px;
+    margin: 5px 2px;
+    background: #BBB;
+    border-radius: 8px;
 }
