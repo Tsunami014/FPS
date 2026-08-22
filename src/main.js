@@ -37,6 +37,8 @@ function inspectElm(parent, data) {
     })
 }
 
+var selecting;
+
 function loadTree(tree, data) {
     data.forEach(it=>{
         if (it.class) {
@@ -47,8 +49,22 @@ function loadTree(tree, data) {
             elm.onclick = ()=>{
                 const insp = document.getElementById("inspector")
                 insp.replaceChildren()
-                inspectElm(insp, OBJS[it.class])
-                gotoInspector()
+                const titl = document.createElement("div")
+                titl.innerText = it.labl
+                titl.classList.add("insptitle")
+                titl.classList.add("obj_"+it.class)
+                insp.appendChild(titl)
+                if (it.spec) inspectElm(insp, it.spec)
+
+                // Instantly go to the inspector
+                document.getElementById("side").className = "displinsp"
+                updateLTabSel()
+
+                // Remove selected if exists
+                const sel = document.querySelector('.scnsel')
+                if (sel) sel.classList.remove("scnsel")
+                // Add sel to this
+                elm.classList.add("scnsel")
             }
             tree.appendChild(elm)
         } else {
@@ -76,11 +92,6 @@ function updateLTabSel() {
     const displ = document.getElementById("side").className
     const elm = document.getElementById("sidetabs").children[ltabbtns.findIndex(it=>{ return it[1] == displ })]
     if (elm) elm.classList.add("sel")
-}
-
-function gotoInspector() {
-    document.getElementById("side").className = "displinsp"
-    updateLTabSel()
 }
 
 

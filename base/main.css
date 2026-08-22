@@ -127,12 +127,14 @@ details[open] { padding-bottom: 5px; }
 
 summary, .obj, .item {
     padding: 3px 2px;
+    border-radius: 4px;
 }
 summary:hover, .obj:hover {
     background-color: #AAA;
-    border-radius: 4px;
 }
 details.regular > summary:hover { background-color: #999; }
+.scnsel { background-color: #AA9 !important; }
+.scnsel:hover { background-color: #998 !important; }
 
 /* Vertical connecting line */
 details::before {
@@ -163,8 +165,8 @@ details > summary::before, .obj::before {
 }
 details[open] > summary::before { content: "● "; }
 .obj::before { content: "- "; }
-.obj.obj_image::before { content: "🖼️ "; }
-.obj.obj_object::before { content: "📦 "; }
+.obj_image::before { content: "🖼️ "; }
+.obj_object::before { content: "📦 "; }
 
 details.regular > summary::before { content: "› "; }
 details[open].regular > summary::before { content: "ᵛ "; }
@@ -176,6 +178,12 @@ details[open].regular > summary::before { content: "ᵛ "; }
     width: 100%;
     text-align: left;
 }
+
+.insptitle {
+    padding: 5px;
+    font-style: italic;
+}
+
 .bubble {
     padding: 6px 8px;
     margin: 5px 2px;
