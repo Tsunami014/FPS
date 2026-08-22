@@ -45,7 +45,8 @@ body {
 
 #side {
     padding: 5px;
-    background: #AAA;
+    background: #BBB;
+    overflow-y: scroll;
 }
 #main {
     background: white;
@@ -56,7 +57,10 @@ body {
     justify-content: space-between;
     padding-left: 8px;
 }
-#side > :not(header) { display: none; }
+#side > :not(header) {
+    min-height: 30px;
+    display: none;
+}
 #side.displscene > #scene, #side.displinsp > #inspector {
     display: block;
 }
@@ -70,13 +74,13 @@ body {
     margin-right: 8px;
 }
 #side > header > button.sel {
-    background: grey;
+    background: #999;
     border-left: 5px #DD5 solid;
     font-weight: bold;
 }
 #side > section {
     padding: 5px;
-    background-color: grey;
+    background-color: #999;
     border-radius: 5px;
 }
 
@@ -159,7 +163,8 @@ details > summary::before, .obj::before {
 }
 details[open] > summary::before { content: "● "; }
 .obj::before { content: "- "; }
-.obj.image::before { content: "🖼️ "; }
+.obj.obj_image::before { content: "🖼️ "; }
+.obj.obj_object::before { content: "📦 "; }
 
 details.regular > summary::before { content: "› "; }
 details[open].regular > summary::before { content: "ᵛ "; }

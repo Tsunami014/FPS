@@ -42,9 +42,14 @@ function loadTree(tree, data) {
         if (it.class) {
             const elm = document.createElement("button")
             elm.classList.add("obj")
-            elm.classList.add(it.class)
+            elm.classList.add("obj_"+it.class)
             elm.innerText = it.labl
-            elm.onclick = gotoInspector
+            elm.onclick = ()=>{
+                const insp = document.getElementById("inspector")
+                insp.replaceChildren()
+                inspectElm(insp, OBJS[it.class])
+                gotoInspector()
+            }
             tree.appendChild(elm)
         } else {
             const newtree = document.createElement("details")
@@ -80,37 +85,21 @@ function gotoInspector() {
 
 
 function updateTopSel(hash) {
+    hash = hash || "#main"
     // Remove selected element if already exists
     const sel = document.querySelector('a.sel')
     if (sel) sel.classList.remove("sel")
     // Set active title
-    const newsel = document.getElementById("top").querySelector(`a[href="${hash || "#main"}"]`)
+    const newsel = document.getElementById("top").querySelector(`a[href="${hash}"]`)
     if (newsel) newsel.classList.add("sel")
 
     const stage = document.getElementById("stage")
     stage.replaceChildren()
-    loadTree(stage, [
-        { labl: "Stage", open: true, conts: [
-            { labl: "Obj", class: "image" },
-            { labl: "Hello", conts: [
-                { labl: "Obj", class: "image" },
-            ]},
-        ]},
-    ])
+    loadTree(stage, SCREENS[hash.substr(1)])
 }
 
 { // When the page loads
     updateTopSel(location.hash)
-    const insp = document.getElementById("inspector")
-    insp.replaceChildren()
-    inspectElm(insp, [
-        { labl: "Test", bubble: true, conts: [
-            { labl: "Transform", conts: [
-                { labl: "Transform", type: "labl" },
-                { labl: "Test", type: "btn" },
-            ]},
-        ]},
-    ])
     // Auto generate side tab buttons
     const tabbar = document.getElementById("sidetabs")
     const side = document.getElementById("side")
