@@ -68,13 +68,13 @@ function updateLTabSel() {
     const sel = document.querySelector('button.sel')
     if (sel) sel.classList.remove("sel")
     // Set new selected
-    const displ = document.getElementById("left").className
-    const elm = document.getElementById("lefttabs").children[ltabbtns.findIndex(it=>{ return it[1] == displ })]
+    const displ = document.getElementById("side").className
+    const elm = document.getElementById("sidetabs").children[ltabbtns.findIndex(it=>{ return it[1] == displ })]
     if (elm) elm.classList.add("sel")
 }
 
 function gotoInspector() {
-    document.getElementById("left").className = "displinsp"
+    document.getElementById("side").className = "displinsp"
     updateLTabSel()
 }
 
@@ -111,21 +111,21 @@ function updateTopSel(hash) {
             ]},
         ]},
     ])
-    // Auto generate left tab buttons
-    const tabbar = document.getElementById("lefttabs")
-    const left = document.getElementById("left")
+    // Auto generate side tab buttons
+    const tabbar = document.getElementById("sidetabs")
+    const side = document.getElementById("side")
     ltabbtns.forEach(it=>{
         const btn = document.createElement("button")
         btn.type = "button"
         btn.classList.add("tab")
         btn.innerText = it[0]
         btn.onclick = ()=>{
-            left.className = it[1]
+            side.className = it[1]
             updateLTabSel()
         }
         tabbar.appendChild(btn)
     })
-    left.className = ltabbtns[0][1]
+    side.className = ltabbtns[0][1]
     updateLTabSel()
 }
 // When page navigation occurs

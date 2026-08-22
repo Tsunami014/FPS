@@ -9,8 +9,8 @@ body {
     height: 100%;
     /* Top uses its height, bottom takes remaining */
     grid-template-rows: auto 1fr;
-    /* Left | Middle */
-    grid-template-columns: 35% 1fr;
+    /* Side | Middle */
+    grid-template-columns: 1fr 35%;
 }
 
 #top {
@@ -19,7 +19,7 @@ body {
     padding: 5px;
     padding-top: 0;
 }
-#top, #left > header {
+#top, #side > header {
     display: flex;
     flex-wrap: nowrap;
     overflow-x: auto;
@@ -43,7 +43,7 @@ body {
     font-weight: bold;
 }
 
-#left {
+#side {
     padding: 5px;
     background: #AAA;
 }
@@ -52,15 +52,15 @@ body {
 }
 
 
-#left > header {
+#side > header {
     justify-content: space-between;
     padding-left: 8px;
 }
-#left > :not(header) { display: none; }
-#left.displscene > #scene, #left.displinsp > #inspector {
+#side > :not(header) { display: none; }
+#side.displscene > #scene, #side.displinsp > #inspector {
     display: block;
 }
-#left > header > button {
+#side > header > button {
     border: none;
     border-top-right-radius: 8px;
     border-left: 5px #55E solid;
@@ -69,12 +69,12 @@ body {
     background-color: #99B;
     margin-right: 8px;
 }
-#left > header > button.sel {
+#side > header > button.sel {
     background: grey;
     border-left: 5px #DD5 solid;
     font-weight: bold;
 }
-#left > section {
+#side > section {
     padding: 5px;
     background-color: grey;
     border-radius: 5px;
