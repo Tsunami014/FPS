@@ -211,3 +211,17 @@ details[open].regular > summary::before { content: "ᵛ "; }
 hr {
     margin: 15px 10px;
 }
+
+label.item {
+    display: block;
+}
+input[type=text], textarea {
+    width: 100%;
+    resize: vertical;
+    padding: 3px 5px;
+    border-radius: 8px;
+    background-color: #EEE;
+}
+input[type=text]:focus, textarea {
+    background-color: #FFF;
+}

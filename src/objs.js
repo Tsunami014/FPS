@@ -33,7 +33,7 @@ class TextObj extends Node2DObj {
     get spec() {
         return [
             { labl: "Text", bubble: true },
-            { labl: "Text", type: "labl" },
+            { labl: "Text", type: "multiline" },
             { labl: "Text colour", type: "labl" },
             { labl: "Width", type: "labl" },
         null, ...super.spec]
@@ -69,7 +69,7 @@ class ImageObj extends Node2DObj {
     get spec() {
         return [
             { labl: "Image", bubble: true },
-            { labl: "URL", type: "labl" },
+            { labl: "URL", type: "line" },
         null, ...super.spec]
     }
     static get cls() { return "img" }

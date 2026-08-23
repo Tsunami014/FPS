@@ -16,6 +16,11 @@ function inspectElm(parent, data) {
         } else if (it.type) {
             var elm
             switch (it.type) {
+                case "line":
+                case "multiline":
+                    elm = document.createElement("label")
+                    elm.innerText = it.labl
+                    break;
                 case "labl":
                     elm = document.createElement("div")
                     elm.innerText = it.labl
@@ -31,6 +36,17 @@ function inspectElm(parent, data) {
             if (elm) {
                 elm.classList.add("item")
                 parent.appendChild(elm)
+                switch (it.type) {
+                    case "line":
+                        inp = document.createElement("input")
+                        inp.type = "text"
+                        parent.appendChild(inp)
+                        break;
+                    case "multiline":
+                        inp = document.createElement("textarea")
+                        parent.appendChild(inp)
+                        break;
+                }
             }
         } else if (it.bubble) {
             const elm = document.createElement("div")
