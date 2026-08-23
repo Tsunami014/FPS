@@ -66,15 +66,16 @@ function loadTree(tree, data) {
                 insp.appendChild(titl)
                 if (it.spec) inspectElm(insp, it.spec)
 
-                // Instantly go to the inspector
-                document.getElementById("side").className = "displinsp"
-                updateLTabSel()
-
                 // Remove selected if exists
                 const sel = document.querySelector('.scnsel')
                 if (sel) sel.classList.remove("scnsel")
                 // Add sel to this
                 elm.classList.add("scnsel")
+            }
+            elm.ondblclick = ()=>{
+                // Instantly go to the inspector
+                document.getElementById("side").className = "displinsp"
+                updateLTabSel()
             }
             tree.appendChild(elm)
         } else {

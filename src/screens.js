@@ -1,22 +1,29 @@
 const SCREENS = {
     home: [
         { labl: "Stage", open: true, conts: [
-            (new TestObj("Test")).screenObj
-            { labl: "Hello", conts: [
-                { labl: "Obj", class: "image" },
+            { labl: "TitlePage", conts: [
+                (new BannerObj("Announcements")).screenObj,
+                (new ImageObj("BannerImage")).screenObj,
+                (new TextObj("Title")).screenObj,
             ]},
-            (new TextObj("Hello!")).screenObj
+            { labl: "AboutPage", conts: [
+                (new SectionObj("WhatIsThis")).screenObj,
+                (new SectionObj("HowThisWorks")).screenObj,
+                (new SectionObj("IsHackClubReal")).screenObj,
+                (new SectionObj("AmIEligible")).screenObj,
+                (new SectionObj("HowToJoin")).screenObj,
+            ]},
+            { labl: "HelpSection", conts: [
+                (new BackgroundObj("Background")).screenObj,
+                (new FAQObj("FAQItem")).screenObj,
+                (new FAQObj("FAQItem")).screenObj,
+            ]},
         ]},
     ],
     projects: [
-        { labl: "Stage", open: true, conts: [
-            { labl: "Test", class: "image" },
-        ]},
     ],
     shop: [
-
     ],
     settings: [
-
     ],
 }

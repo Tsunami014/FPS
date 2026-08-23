@@ -7,12 +7,16 @@ body {
     display: grid;
     margin: 0;
     height: 100%;
-    /* Top uses its height, bottom takes remaining */
-    grid-template-rows: auto 1fr;
 }
 body:not(.mobile) {
+    /* Top uses its height, bottom takes remaining */
+    grid-template-rows: auto 1fr;
     /* Side | Middle */
-    grid-template-columns: 1fr 35%;
+    grid-template-columns: 1fr minmax(min-content, 25%);
+}
+body.mobile {
+    /* Top uses its height, bottom and side share remaining */
+    grid-template-rows: auto 1fr 1fr;
 }
 
 #top {
@@ -46,7 +50,7 @@ body:not(.mobile) {
 }
 
 #side {
-    padding: 5px;
+    padding: 5px 10px;
     background: #BBB;
     overflow-y: scroll;
 }
@@ -58,12 +62,18 @@ body:not(.mobile) {
 #side > header {
     padding-left: 8px;
 }
-#side > :not(header) {
+#side > section {
     min-height: 30px;
-    display: none;
 }
-#side.displscene > #scene, #side.displinsp > #inspector {
-    display: block;
+#side.displscene > section:not(#scene),
+#side.displinsp > section:not(#inspector) {
+    visibility: hidden;
+    height: 0;
+    min-height: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    display: inline-block;
+    overflow: hidden;
 }
 #side > header > button {
     border: none;
@@ -129,6 +139,8 @@ details[open] { padding-bottom: 5px; }
 summary, .obj, .item {
     padding: 3px 2px;
     border-radius: 4px;
+    white-space: nowrap;
+    min-width: max-content;
 }
 summary:hover, .obj:hover {
     background-color: #AAA;
@@ -165,10 +177,13 @@ details > summary::before, .obj::before {
     display: inline-block;
 }
 details[open] > summary::before { content: "● "; }
-.obj::before { content: "- "; }
-.obj_image::before { content: "🖼️ "; }
-.obj_object::before { content: "📦 "; }
-.obj_info::before { content: "ℹ️ "; }
+.obj::before { content: "  "; }
+.obj_text::before { content: "¶ "; }
+.obj_banner::before { content: "⚑ "; }
+.obj_sect::before { content: "▤ "; }
+.obj_img::before { content: "▣ "; }
+.obj_bg::before { content: "◇ "; }
+.obj_info::before { content: "? "; }
 
 details.regular > summary::before { content: "› "; }
 details[open].regular > summary::before { content: "ᵛ "; }

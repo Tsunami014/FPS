@@ -1,4 +1,4 @@
-class Node2D {
+class Node2DObj {
     constructor(name) {
         this.name = name
     }
@@ -10,7 +10,8 @@ class Node2D {
                 { labl: "X", type: "labl" },
                 { labl: "Y", type: "labl" },
             ]},
-            { labl: "Rotation", type: "labl" },
+            { labl: "Rotation", conts: [
+            ]},
             { labl: "Scale", conts: [
                 { labl: "X", type: "labl" },
                 { labl: "Y", type: "labl" },
@@ -25,25 +26,75 @@ class Node2D {
     }
 }
 
+// -----
 
-class TextObj extends Node2D {
+
+class TextObj extends Node2DObj {
     get spec() {
         return [
             { labl: "Text", bubble: true },
             { labl: "Text", type: "labl" },
-            { labl: "Text Colour", type: "labl" },
+            { labl: "Text colour", type: "labl" },
             { labl: "Width", type: "labl" },
         null, ...super.spec]
     }
-    static get cls() { return "info" }
+    static get cls() { return "text" }
 }
 
-class TestObj extends Node2D {
+class BannerObj extends TextObj {
     get spec() {
         return [
-            { labl: "Test", bubble: true },
-            { labl: "Test", type: "btn" },
+            { labl: "Banner", bubble: true },
+            { labl: "Background colour", type: "labl" },
+            { labl: "Border style", type: "labl" },
         null, ...super.spec]
     }
-    static get cls() { return "object" }
+    static get cls() { return "banner" }
+}
+
+class SectionObj extends TextObj {
+    get spec() {
+        return [
+            { labl: "Section", bubble: true },
+            { labl: "Background style", type: "labl" },
+        null, ...super.spec]
+    }
+    static get cls() { return "sect" }
+}
+
+// -----
+
+
+class ImageObj extends Node2DObj {
+    get spec() {
+        return [
+            { labl: "Image", bubble: true },
+            { labl: "URL", type: "labl" },
+        null, ...super.spec]
+    }
+    static get cls() { return "img" }
+}
+
+class BackgroundObj extends Node2DObj {
+    get spec() {
+        return [
+            { labl: "Background", bubble: true },
+            { labl: "Image", type: "labl" },
+        null, ...super.spec]
+    }
+    static get cls() { return "bg" }
+}
+
+// -----
+
+
+class FAQObj extends TextObj {
+    get spec() {
+        return [
+            { labl: "FAQ Item", bubble: true },
+            { labl: "Question", type: "labl" },
+            { labl: "Answer", type: "labl" },
+        null, ...super.spec]
+    }
+    static get cls() { return "info" }
 }
