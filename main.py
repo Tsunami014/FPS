@@ -5,18 +5,25 @@ from urllib.parse import quote_plus
 import os
 import requests
 import config
+import sqliteLimiter # Only needs to be imported to use sqlite storage in the Limiter!
+sqliteLimiter.register() # No-op to stop the linter from complaining
 
-os.system("cat src/user.js src/objs.js src/screens.js src/main.js | minify --type js -o build/index.js")
-os.system("minify base/main.html -o build/index.html")
-os.system("minify base/main.css -o build/index.css")
+for cmd in (
+    "cat src/user.js src/objs.js src/screens.js src/main.js | minify --type js -o build/index.js",
+    "minify base/main.html -o build/index.html",
+    "minify base/main.css -o build/index.css",
+    ):
+    if os.system(cmd) != 0:
+        raise RuntimeError("Command failed!")
 print("Finished building!")
 
 app = Flask(__name__)
-limiter = Limiter(get_remote_address, app=app, default_limits=["100 per hour"])
+limiter = Limiter(get_remote_address, app=app,
+    storage_uri="sqlite:///limiter.db", default_limits=["100 per hour"])
 
 # We reimplement this here to avoid cors issues
 @app.route('/api/token', methods=['POST'])
-@limiter.limit("10 per 15 minutes")
+@limiter.limit("3 per minute; 8 per 5 minutes; 20 per 30 minutes; 30 per day")
 def get_token():
     data = request.form
     body = {
@@ -50,4 +57,5 @@ def mainjs():
 def maincss():
     return Response(CSS, mimetype='text/css')
 
-app.run(port="9876")
+if __name__ == '__main__':
+    app.run(port="9876")
