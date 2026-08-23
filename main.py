@@ -19,11 +19,11 @@ print("Finished building!")
 
 app = Flask(__name__)
 limiter = Limiter(get_remote_address, app=app,
-    storage_uri="sqlite:///limiter.db", default_limits=["100 per hour"])
+    storage_uri="sqlite:///limiter.db", default_limits=["200 per minute"])
 
 # We reimplement this here to avoid cors issues
 @app.route('/api/token', methods=['POST'])
-@limiter.limit("3 per minute; 8 per 5 minutes; 20 per 30 minutes; 30 per day")
+@limiter.limit("5 per minute; 15 per 15 minutes; 50 per hour")
 def get_token():
     data = request.form
     body = {
