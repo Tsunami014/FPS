@@ -1,33 +1,49 @@
-class InfoObj {
+class Node2D {
     constructor(name) {
-        this.name = name;
+        this.name = name
     }
 
-    screenObj() {
-        return { labl: this.name, class: "info", spec: [
-            { labl: "Image", bubble: true, conts: [
-                { labl: "Transform", conts: [
-                    { labl: "Transform", type: "labl" },
-                    { labl: "Test", type: "btn" },
-                ]},
+    get spec() {
+        return [
+            { labl: "Node2D", bubble: true },
+            { labl: "Position", conts: [
+                { labl: "X", type: "labl" },
+                { labl: "Y", type: "labl" },
             ]},
-        ]}
+            { labl: "Rotation", type: "labl" },
+            { labl: "Scale", conts: [
+                { labl: "X", type: "labl" },
+                { labl: "Y", type: "labl" },
+            ]},
+        ]
+    }
+
+    static get cls() { return "misc" }
+
+    get screenObj() {
+        return { labl: this.name, class: this.constructor.cls, spec: this.spec }
     }
 }
 
-class TestObj {
-    constructor(name) {
-        this.name = name;
-    }
 
-    screenObj() {
-        return { labl: this.name, class: "object", spec: [
-            { labl: "Image", bubble: true, conts: [
-                { labl: "Transform", conts: [
-                    { labl: "Transform", type: "labl" },
-                    { labl: "Test", type: "btn" },
-                ]},
-            ]},
-        ]}
+class TextObj extends Node2D {
+    get spec() {
+        return [
+            { labl: "Text", bubble: true },
+            { labl: "Text", type: "labl" },
+            { labl: "Text Colour", type: "labl" },
+            { labl: "Width", type: "labl" },
+        null, ...super.spec]
     }
+    static get cls() { return "info" }
+}
+
+class TestObj extends Node2D {
+    get spec() {
+        return [
+            { labl: "Test", bubble: true },
+            { labl: "Test", type: "btn" },
+        null, ...super.spec]
+    }
+    static get cls() { return "object" }
 }

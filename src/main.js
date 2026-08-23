@@ -11,7 +11,9 @@ window.addEventListener('resize', checkMobile);
 
 function inspectElm(parent, data) {
     data.forEach(it=>{
-        if (it.type) {
+        if (it === null) {
+            parent.appendChild(document.createElement("hr"))
+        } else if (it.type) {
             var elm
             switch (it.type) {
                 case "labl":
@@ -35,7 +37,6 @@ function inspectElm(parent, data) {
             elm.classList.add("bubble")
             elm.innerText = it.labl
             parent.appendChild(elm)
-            inspectElm(parent, it.conts)
         } else {
             const newbase = document.createElement("details")
             newbase.classList.add("regular")

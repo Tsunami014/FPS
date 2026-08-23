@@ -192,3 +192,7 @@ details[open].regular > summary::before { content: "ᵛ "; }
     background: #BBB;
     border-radius: 8px;
 }
+
+hr {
+    margin: 15px 10px;
+}

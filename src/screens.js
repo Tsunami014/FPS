@@ -1,11 +1,11 @@
 const SCREENS = {
     home: [
         { labl: "Stage", open: true, conts: [
-            (new TestObj("Test")).screenObj()
+            (new TestObj("Test")).screenObj
             { labl: "Hello", conts: [
                 { labl: "Obj", class: "image" },
             ]},
-            (new InfoObj("Test")).screenObj()
+            (new TextObj("Hello!")).screenObj
         ]},
     ],
     projects: [
