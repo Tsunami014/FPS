@@ -88,28 +88,31 @@ function inspectElm(parent, data) {
     })
 }
 
-function loadTree(tree, data) {
+function loadTree(tree, data, parents) {
     data.forEach(it=>{
-        if (it.class) {
+        if (it.isObj) {
+            const sd = it.sceneDef
             const elm = document.createElement("button")
             elm.classList.add("obj")
-            elm.classList.add("obj_"+it.class)
-            elm.innerText = it.labl
+            elm.classList.add("obj_"+sd.class)
+            elm.innerText = sd.labl
             elm.onclick = ()=>{
                 const insp = document.getElementById("inspector")
                 insp.replaceChildren()
                 const titl = document.createElement("div")
-                titl.innerText = it.labl
+                titl.innerText = sd.labl
                 titl.classList.add("insptitle")
-                titl.classList.add("obj_"+it.class)
+                titl.classList.add("obj_"+sd.class)
                 insp.appendChild(titl)
-                if (it.spec) inspectElm(insp, it.spec)
+                if (sd.spec) inspectElm(insp, sd.spec)
 
                 // Remove selected if exists
-                const sel = document.querySelector('.scnsel')
-                if (sel) sel.classList.remove("scnsel")
-                // Add sel to this
+                document.querySelectorAll('.scnsel').forEach(elm=>{
+                    elm.classList.remove("scnsel")
+                })
+                // Add sel to this and all parents
                 elm.classList.add("scnsel")
+                parents.forEach(elm=>{ elm.classList.add("scnsel") })
             }
             elm.ondblclick = ()=>{
                 // Instantly go to the inspector
@@ -123,7 +126,7 @@ function loadTree(tree, data) {
             const labl = document.createElement("summary")
             labl.innerText = it.labl
             newtree.appendChild(labl)
-            loadTree(newtree, it.conts)
+            loadTree(newtree, it.conts, [...parents, labl])
             tree.appendChild(newtree)
         }
     })
@@ -162,7 +165,7 @@ function updateTopSel(hash) {
 
     const stage = document.getElementById("stage")
     stage.replaceChildren()
-    loadTree(stage, SCREENS[hash.substr(1)])
+    loadTree(stage, SCREENS[hash.substr(1)], [])
 }
 
 { // When the page loads

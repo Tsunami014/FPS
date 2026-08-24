@@ -1,4 +1,5 @@
 class Node2DObj {
+    isObj = true
     constructor(name) {
         this.name = name
     }
@@ -7,22 +8,24 @@ class Node2DObj {
         return [
             { labl: "Node2D", bubble: true },
             { labl: "Position", conts: [
-                { labl: "X", type: "labl" },
-                { labl: "Y", type: "labl" },
+                { labl: "X", type: "num" },
+                { labl: "Y", type: "num" },
             ]},
             { labl: "Rotation", conts: [
+                { labl: "Rot", type: "num" },
             ]},
             { labl: "Scale", conts: [
-                { labl: "X", type: "labl" },
-                { labl: "Y", type: "labl" },
+                { labl: "X", type: "num" },
+                { labl: "Y", type: "num" },
             ]},
         ]
     }
-
     static get cls() { return "misc" }
-
-    get screenObj() {
-        return { labl: this.name, class: this.constructor.cls, spec: this.spec }
+    get sceneDef() {
+        if (!this._scrobj) {
+            this._scrobj = { labl: this.name, class: this.constructor.cls, spec: this.spec }
+        }
+        return this._scrobj
     }
 }
 
