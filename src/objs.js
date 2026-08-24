@@ -1,8 +1,11 @@
 class Node2DObj {
     static isObj = true
-    constructor(name) {
+    constructor(name, attrs) {
         this.name = name
+        this.attrs = { ...this._defaults, ...attrs }
     }
+    get _defaults() { return {
+    }}
 
     _makeObject() {
         const elm = document.createElement("p")
@@ -47,15 +50,14 @@ class Node2DObj {
 
 
 class TextObj extends Node2DObj {
-    constructor(name, txt="", size=18) {
-        super(name)
-        this.txt = txt
-        this.sze = size
-    }
+    get _defaults() { return { ...super._defaults,
+        text: "Placeholder",
+        text_size: 18,
+    }}
     _makeObject() {
         const elm = document.createElement("p")
-        elm.innerText = this.txt
-        elm.style.fontSize = this.sze
+        elm.innerText = this.attrs.text
+        elm.style.fontSize = this.attrs.text_size
         return elm
     }
     get fonts() {

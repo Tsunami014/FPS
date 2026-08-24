@@ -2,9 +2,14 @@ const SCREENS = {
   home: [
     new Page("Stage", [
       new Page("TitlePage", [
-        new BannerObj("Announcements"),
+        new BannerObj("Announcements", {
+          text: "Announcement!",
+          text_size: 28,
+        }),
         new ImageObj("BannerImage"),
-        new TextObj("Title", "FPS"),
+        new TextObj("Title", {
+          text: "FPS",
+        }),
       ]),
       new Page("AboutPage", [
         new SectionObj("WhatIsThis"),
