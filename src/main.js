@@ -101,6 +101,12 @@ function inspectElm(parent, data) {
     })
 }
 
+function deselect() {
+    const oldsel = document.querySelector('.scnsel')
+    if (oldsel) oldsel.classList.remove("scnsel")
+    const oldsel2 = document.querySelector('.selmainobj')
+    if (oldsel2) oldsel2.classList.remove("selmainobj")
+}
 function setupClickHandler(elm, mainelm, sd) {
     elm.onclick = ()=>{
         const insp = document.getElementById("inspector")
@@ -112,11 +118,7 @@ function setupClickHandler(elm, mainelm, sd) {
         insp.appendChild(titl)
         if (sd.spec) inspectElm(insp, sd.spec)
 
-        // Remove selected if exists
-        const oldsel = document.querySelector('.scnsel')
-        if (oldsel) oldsel.classList.remove("scnsel")
-        const oldsel2 = document.querySelector('.selmainobj')
-        if (oldsel2) oldsel2.classList.remove("selmainobj")
+        deselect()
         // Add sel to this
         elm.classList.add("scnsel")
         mainelm.classList.add("selmainobj")
@@ -168,6 +170,8 @@ function updateLTabSel() {
 }
 
 
+const stage = document.getElementById("stage")
+const mainStage = document.getElementById("main")
 function updateTopSel(hash) {
     hash = hash || "#main"
     // Remove selected element if already exists
@@ -183,14 +187,12 @@ function updateTopSel(hash) {
     document.getElementById("side").className = "displscene"
     updateLTabSel()
 
-    const stage = document.getElementById("stage")
     stage.replaceChildren()
-    const mainStage = document.getElementById("main")
     mainStage.replaceChildren()
     loadTree(stage, SCREENS[hash.substr(1)], mainStage)
 }
 
-{ // When the page loads
+{ // Stuff that runs instantly
     updateTopSel(location.hash)
     // Auto generate side tab buttons
     const tabbar = document.getElementById("sidetabs")
@@ -208,6 +210,9 @@ function updateTopSel(hash) {
     })
     side.className = ltabbtns[0][1]
     updateLTabSel()
+    mainStage.addEventListener('click', ()=>{
+        deselect()
+    });
 }
 // When page navigation occurs
 navigation.addEventListener('navigate', ()=>{

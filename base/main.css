@@ -58,6 +58,8 @@ body.mobile {
     background: white;
 }
 
+#main * { max-width: fit-content; }
+
 
 #side > header {
     padding-left: 8px;
