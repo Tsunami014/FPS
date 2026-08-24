@@ -55,10 +55,14 @@ body.mobile {
     overflow-y: scroll;
 }
 #main {
-    background: white;
+    background: #EFF2FF;
+    overflow: scroll;
 }
 
-#main * { max-width: fit-content; }
+#main * {
+    max-width: fit-content;
+}
+#main p { overflow-wrap: break-word; }
 
 
 #side > header {

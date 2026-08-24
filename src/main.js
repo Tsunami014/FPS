@@ -9,6 +9,17 @@ checkMobile();
 window.addEventListener('resize', checkMobile);
 
 
+const clamp = (num, min, max) => {
+    let res = num;
+    if (min !== null && min !== undefined) {
+        res = Math.max(res, min);
+    }
+    if (max !== null && max !== undefined) {
+        res = Math.min(res, max);
+    }
+    return res;
+};
+
 function inspectElm(parent, data) {
     data.forEach(it=>{
         if (it === null) {
@@ -67,7 +78,20 @@ function inspectElm(parent, data) {
                         inp = document.createElement("input")
                         inp.type = "number"
                         if (it.value) inp.value = it.value
-                        if (conn) inp.oninput = conn
+                        if (conn) {
+                            inp.oninput = (e)=>{
+                                var val = e.target.value
+                                if (it.bound) {
+                                    val = clamp(val, it.bound[0], it.bound[1])
+                                }
+                                it.conn(val)
+                            }
+                        }
+                        if (it.bound) {
+                            inp.onchange = (e)=>{
+                                e.target.value = clamp(e.target.value, it.bound[0], it.bound[1])
+                            }
+                        }
                         parent.appendChild(inp)
                         break;
                     case "opts":

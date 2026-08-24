@@ -1,11 +1,14 @@
+function connectValue(attrs, name, aftfn) {
+    return { value: attrs[name], conn: (v)=>{ attrs[name] = v; aftfn() } }
+}
+
 class Node2DObj {
     static isObj = true
     constructor(name, attrs) {
         this.name = name
         this.attrs = { ...this._defaults, ...attrs }
     }
-    get _defaults() { return {
-    }}
+    get _defaults() { return {} }
 
     _makeObject() {
         const elm = document.createElement("p")
@@ -53,30 +56,43 @@ class TextObj extends Node2DObj {
     get _defaults() { return { ...super._defaults,
         text: "Placeholder",
         text_size: 18,
+        text_font: "Monospace",
+        text_colour: "#222222",
+        max_width: 0,
     }}
     _makeObject() {
         const elm = document.createElement("p")
-        elm.innerText = this.attrs.text
-        elm.style.fontSize = this.attrs.text_size
+        this.#style(elm)
         return elm
+    }
+    #style(elm) {
+        const attrs = this.attrs
+        if (!elm) elm = this.mainobj
+        elm.innerText = attrs.text
+        elm.style.fontSize = `${attrs.text_size}px`
+        elm.style.fontFamily = attrs.text_font
+        elm.style.color = attrs.text_colour
+        elm.style.maxWidth = attrs.max_width==0? "" : `${attrs.max_width}px`
     }
     get fonts() {
         return [
-            "font1",
-            "font2",
+            "Arial",
+            "Times New Roman",
+            "Georgia",
+            "Monospace",
         ]
     }
     get spec() {
+        const connval = (nam)=>connectValue(this.attrs, nam, ()=>this.#style())
         return [
             { labl: "Text", bubble: true },
-            { labl: "Text", type: "multiline",
-                value: this.txt, conn: (t)=>{ this.mainobj.innerText = t } },
+            { labl: "Text", type: "multiline", ...connval("text") }
             { labl: "Style", conts: [
-                { labl: "Font size", type: "num" },
-                { labl: "Font", type: "opts", choices: this.fonts },
-                { labl: "Text colour", type: "col" },
+                { labl: "Font size", type: "num", ...connval("text_size"), bound: [8, 100] },
+                { labl: "Font", type: "opts", choices: this.fonts, ...connval("text_font") }
+                { labl: "Text colour", type: "col", ...connval("text_colour") }
             ]},
-            { labl: "Width", type: "num" },
+            { labl: "Width", type: "num", ...connval("max_width"), bound: [0, null] },
         null, ...super.spec]
     }
     static cls = "text"
@@ -116,26 +132,64 @@ class SectionObj extends TextObj {
 
 
 class ImageObj extends Node2DObj {
+    get _defaults() { return { ...super._defaults,
+        url: "https://www.placekittens.com/300/200",
+        alt: "An image you forgot to add alt text for",
+    }}
+    _makeObject() {
+        const elm = document.createElement("img")
+        this.#style(elm)
+        return elm
+    }
+    #style(elm) {
+        const attrs = this.attrs
+        if (!elm) elm = this.mainobj
+        elm.src = attrs.url
+        elm.alt = attrs.alt
+    }
     get spec() {
+        const connval = (nam)=>connectValue(this.attrs, nam, ()=>this.#style())
         return [
             { labl: "Image", bubble: true },
-            { labl: "URL", type: "line" },
+            { labl: "URL", type: "line", ...connval("url") },
+            { labl: "Alt text", type: "line", ...connval("alt") },
         null, ...super.spec]
     }
     static cls = "img"
 }
 
 class BackgroundObj extends Node2DObj {
+    get _defaults() {
+        const cs = Object.keys(this.choices)
+        return { ...super._defaults,
+        img: cs[Math.floor(Math.random() * cs.length)],
+        width: 300,
+        height: 300,
+    }}
+    _makeObject() {
+        const elm = document.createElement("img")
+        this.#style(elm)
+        return elm
+    }
     get choices() {
-        return [
-            "image1.png",
-            "image2.png",
-        ]
+        return {
+            "Thin kitten": ["https://www.placekittens.com/400/100", "A thin kitty"],
+            "Tall kitten": ["https://www.placekittens.com/100/400", "A tall kitty"],
+        }
+    }
+    #style(elm) {
+        const attrs = this.attrs
+        if (!elm) elm = this.mainobj
+        elm.src = this.choices[attrs.img][0]
+        elm.alt = this.choices[attrs.img][1]
+        elm.width = attrs.width
+        elm.height = attrs.height
     }
     get spec() {
+        const connval = (nam)=>connectValue(this.attrs, nam, ()=>this.#style())
         return [
             { labl: "Background", bubble: true },
-            { labl: "Image", type: "opts", choices: this.choices },
+            { labl: "Image", type: "opts", choices: Object.keys(this.choices), ...connval("img") },
         null, ...super.spec]
     }
     static cls = "bg"

@@ -6,7 +6,10 @@ const SCREENS = {
           text: "Announcement!",
           text_size: 28,
         }),
-        new ImageObj("BannerImage"),
+        new ImageObj("BannerImage", {
+          url: "https://www.placekittens.com/200/200",
+          alt: "A cute kitten!",
+        }),
         new TextObj("Title", {
           text: "FPS",
         }),
