@@ -238,9 +238,7 @@ function updateTopSel(hash) {
     })
     side.className = ltabbtns[0][1]
     updateLTabSel()
-    mainStage.addEventListener('click', ()=>{
-        deselect()
-    });
+    mainStage.addEventListener('click', deselect)
 }
 // When page navigation occurs
 navigation.addEventListener('navigate', ()=>{

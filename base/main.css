@@ -56,9 +56,9 @@ body.mobile {
 }
 #main {
     background: #EFF2FF;
-    z-index: -1;
     overflow: clip;
 }
+#top, #side { z-index: 1; }
 
 #main * {
     max-width: fit-content;
