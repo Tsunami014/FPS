@@ -1,8 +1,6 @@
 function connectValue(obj, name) {
     return {
-        get value() {
-            return obj.attrs[name]
-        },
+        value: obj.attrs[name],
         conn(v) {
             obj.attrs[name] = v
             obj._style()
@@ -56,12 +54,8 @@ class Node2DObj {
         ]
     }
     static cls = "misc"
-    #_scrobj = null
     get sceneDef() {
-        if (!this.#_scrobj) {
-            this.#_scrobj = { labl: this.name, class: this.constructor.cls, spec: this.spec }
-        }
-        return this.#_scrobj
+        return { labl: this.name, class: this.constructor.cls, spec: this.spec }
     }
 }
 
@@ -273,12 +267,8 @@ class Page extends Node2DObj {
         ]
     }
     static cls = "dot"
-    #_scrobj = null
     get sceneDef() {
-        if (!this.#_scrobj) {
-            this.#_scrobj = { labl: this.name, class: this.constructor.cls,
-                conts: this.conts, spec: this.spec }
-        }
-        return this.#_scrobj
+        return { labl: this.name, class: this.constructor.cls,
+            conts: this.conts, spec: this.spec }
     }
 }

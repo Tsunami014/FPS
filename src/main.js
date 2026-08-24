@@ -63,7 +63,7 @@ function inspectElm(parent, data) {
                         break;
                     case "multiline":
                         inp = document.createElement("textarea")
-                        if (it.value) inp.innerText = it.value
+                        if (it.value) inp.value = it.value
                         if (conn) inp.oninput = conn
                         parent.appendChild(inp)
                         break;
@@ -80,7 +80,7 @@ function inspectElm(parent, data) {
                         if (it.value) inp.value = it.value
                         if (conn) {
                             inp.oninput = (e)=>{
-                                var val = e.target.value
+                                var val = e.target.valueAsNumber
                                 if (it.bound) {
                                     val = clamp(val, it.bound[0], it.bound[1])
                                 }
@@ -131,21 +131,25 @@ function deselect() {
     const oldsel2 = document.querySelector('.selmainobj')
     if (oldsel2) oldsel2.classList.remove("selmainobj")
 }
-function setupClickHandler(elm, mainelm, sd) {
+function setupClickHandler(elm, it) {
     elm.onclick = ()=>{
+        const sd = it.sceneDef
+
         const insp = document.getElementById("inspector")
         insp.replaceChildren()
+
         const titl = document.createElement("div")
         titl.innerText = sd.labl
         titl.classList.add("insptitle")
         titl.classList.add("obj_"+sd.class)
         insp.appendChild(titl)
+
         if (sd.spec) inspectElm(insp, sd.spec)
 
         deselect()
         // Add sel to this
         elm.classList.add("scnsel")
-        mainelm.classList.add("selmainobj")
+        it.mainobj.classList.add("selmainobj")
     }
     elm.ondblclick = ()=>{
         // Instantly go to the inspector
@@ -162,7 +166,7 @@ function loadTree(tree, data, parentStage) {
             elm.classList.add("obj")
             elm.classList.add("obj_"+sd.class)
             elm.innerText = sd.labl
-            setupClickHandler(elm, it.mainobj, sd)
+            setupClickHandler(elm, it)
             tree.appendChild(elm)
         } else {
             const newtree = document.createElement("details")
@@ -171,7 +175,7 @@ function loadTree(tree, data, parentStage) {
             labl.innerText = it.name
             newtree.appendChild(labl)
             parentStage.appendChild(it.mainobj)
-            setupClickHandler(labl, it.mainobj, it.sceneDef)
+            setupClickHandler(labl, it)
             loadTree(newtree, it.conts, it.mainobj)
             tree.appendChild(newtree)
         }
