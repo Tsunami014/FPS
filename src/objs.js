@@ -1,13 +1,20 @@
 class Node2DObj {
-    isObj = true
+    static isObj = true
     constructor(name) {
         this.name = name
     }
 
-    makeObject() {
+    _makeObject() {
         const elm = document.createElement("p")
         elm.innerText = "?"
         return elm
+    }
+    #_mobj = null
+    get mainobj() {
+        if (!this.#_mobj) {
+            this.#_mobj = this._makeObject()
+        }
+        return this.#_mobj
     }
 
     get spec() {
@@ -26,12 +33,13 @@ class Node2DObj {
             ]},
         ]
     }
-    static get cls() { return "misc" }
+    static cls = "misc"
+    #_scrobj = null
     get sceneDef() {
-        if (!this._scrobj) {
-            this._scrobj = { labl: this.name, class: this.constructor.cls, spec: this.spec }
+        if (!this.#_scrobj) {
+            this.#_scrobj = { labl: this.name, class: this.constructor.cls, spec: this.spec }
         }
-        return this._scrobj
+        return this.#_scrobj
     }
 }
 
@@ -39,17 +47,37 @@ class Node2DObj {
 
 
 class TextObj extends Node2DObj {
+    constructor(name, txt="", size=18) {
+        super(name)
+        this.txt = txt
+        this.sze = size
+    }
+    _makeObject() {
+        const elm = document.createElement("p")
+        elm.innerText = this.txt
+        elm.style.fontSize = this.sze
+        return elm
+    }
+    get fonts() {
+        return [
+            "font1",
+            "font2",
+        ]
+    }
     get spec() {
         return [
             { labl: "Text", bubble: true },
-            { labl: "Contents", conts: [
-                { labl: "Text", type: "multiline" },
+            { labl: "Text", type: "multiline",
+                value: this.txt, conn: (t)=>{ this.mainobj.innerText = t } },
+            { labl: "Style", conts: [
+                { labl: "Font size", type: "num" },
+                { labl: "Font", type: "opts", choices: this.fonts },
                 { labl: "Text colour", type: "col" },
             ]},
             { labl: "Width", type: "num" },
         null, ...super.spec]
     }
-    static get cls() { return "text" }
+    static cls = "text"
 }
 
 class BannerObj extends TextObj {
@@ -66,7 +94,7 @@ class BannerObj extends TextObj {
             { labl: "Border style", type: "opts", choices: this.choices },
         null, ...super.spec]
     }
-    static get cls() { return "banner" }
+    static cls = "banner"
 }
 
 class SectionObj extends TextObj {
@@ -79,7 +107,7 @@ class SectionObj extends TextObj {
             ]},
         null, ...super.spec]
     }
-    static get cls() { return "sect" }
+    static cls = "sect"
 }
 
 // -----
@@ -92,7 +120,7 @@ class ImageObj extends Node2DObj {
             { labl: "URL", type: "line" },
         null, ...super.spec]
     }
-    static get cls() { return "img" }
+    static cls = "img"
 }
 
 class BackgroundObj extends Node2DObj {
@@ -108,7 +136,7 @@ class BackgroundObj extends Node2DObj {
             { labl: "Image", type: "opts", choices: this.choices },
         null, ...super.spec]
     }
-    static get cls() { return "bg" }
+    static cls = "bg"
 }
 
 // -----
@@ -129,31 +157,32 @@ class FAQObj extends Node2DObj {
             ]},
         null, ...super.spec]
     }
-    static get cls() { return "info" }
+    static cls = "info"
 }
 
 // -----
 
 
 class Page extends Node2DObj {
-    isObj = false
+    static isObj = false
     constructor(name, conts, open=false) {
         super(name)
         this.conts = conts
         this.open = open
     }
 
-    makeObject() {
+    _makeObject() {
         const elm = document.createElement("div")
         return elm
     }
 
-    static get cls() { return "dot" }
+    static cls = "dot"
+    #_scrobj = null
     get sceneDef() {
-        if (!this._scrobj) {
-            this._scrobj = { labl: this.name, class: this.constructor.cls,
+        if (!this.#_scrobj) {
+            this.#_scrobj = { labl: this.name, class: this.constructor.cls,
                 conts: this.conts, spec: this.spec }
         }
-        return this._scrobj
+        return this.#_scrobj
     }
 }

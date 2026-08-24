@@ -15,6 +15,8 @@ function inspectElm(parent, data) {
             parent.appendChild(document.createElement("hr"))
         } else if (it.type) {
             var elm
+            var conn
+            if (it.conn) conn = (e)=>{ it.conn(e.target.value) }
             switch (it.type) {
                 case "line":
                 case "multiline":
@@ -32,6 +34,7 @@ function inspectElm(parent, data) {
                     elm = document.createElement("button")
                     elm.type = "button"
                     elm.innerText = it.labl
+                    if (conn) elm.onclick = conn
                     break;
                 default:
                     console.error("Unknown item type:", it.type)
@@ -43,20 +46,28 @@ function inspectElm(parent, data) {
                     case "line":
                         inp = document.createElement("input")
                         inp.type = "text"
+                        if (it.value) inp.value = it.value
+                        if (conn) inp.oninput = conn
                         parent.appendChild(inp)
                         break;
                     case "multiline":
                         inp = document.createElement("textarea")
+                        if (it.value) inp.innerText = it.value
+                        if (conn) inp.oninput = conn
                         parent.appendChild(inp)
                         break;
                     case "col":
                         inp = document.createElement("input")
                         inp.type = "color" // Ew Americans
+                        if (it.value) inp.value = it.value
+                        if (conn) inp.oninput = conn
                         parent.appendChild(inp)
                         break;
                     case "num":
                         inp = document.createElement("input")
                         inp.type = "number"
+                        if (it.value) inp.value = it.value
+                        if (conn) inp.oninput = conn
                         parent.appendChild(inp)
                         break;
                     case "opts":
@@ -67,6 +78,8 @@ function inspectElm(parent, data) {
                             opt.innerText = val
                             inp.appendChild(opt)
                         })
+                        if (it.value) inp.value = it.value
+                        if (conn) inp.oninput = conn
                         parent.appendChild(inp)
                         break;
                 }
@@ -116,15 +129,14 @@ function setupClickHandler(elm, mainelm, sd) {
 }
 function loadTree(tree, data, parentStage) {
     data.forEach(it=>{
-        if (it.isObj) {
-            const melm = it.makeObject()
-            parentStage.appendChild(melm)
+        if (it.constructor.isObj) {
+            parentStage.appendChild(it.mainobj)
             const sd = it.sceneDef
             const elm = document.createElement("button")
             elm.classList.add("obj")
             elm.classList.add("obj_"+sd.class)
             elm.innerText = sd.labl
-            setupClickHandler(elm, melm, sd)
+            setupClickHandler(elm, it.mainobj, sd)
             tree.appendChild(elm)
         } else {
             const newtree = document.createElement("details")
@@ -132,10 +144,9 @@ function loadTree(tree, data, parentStage) {
             const labl = document.createElement("summary")
             labl.innerText = it.name
             newtree.appendChild(labl)
-            const newstage = it.makeObject()
-            parentStage.appendChild(newstage)
-            setupClickHandler(labl, newstage, it.sceneDef)
-            loadTree(newtree, it.conts, newstage)
+            parentStage.appendChild(it.mainobj)
+            setupClickHandler(labl, it.mainobj, it.sceneDef)
+            loadTree(newtree, it.conts, it.mainobj)
             tree.appendChild(newtree)
         }
     })
