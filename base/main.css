@@ -184,6 +184,7 @@ details[open] > summary::before { content: "● "; }
 .obj_img::before { content: "▣ "; }
 .obj_bg::before { content: "◇ "; }
 .obj_info::before { content: "? "; }
+.obj_dot::before { content: "○ "; }
 
 details.regular > summary::before { content: "› "; }
 details[open].regular > summary::before { content: "ᵛ "; }

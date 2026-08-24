@@ -4,6 +4,12 @@ class Node2DObj {
         this.name = name
     }
 
+    makeObject() {
+        const elm = document.createElement("p")
+        elm.innerText = "?"
+        return elm
+    }
+
     get spec() {
         return [
             { labl: "Node2D", bubble: true },
@@ -124,4 +130,30 @@ class FAQObj extends Node2DObj {
         null, ...super.spec]
     }
     static get cls() { return "info" }
+}
+
+// -----
+
+
+class Page extends Node2DObj {
+    isObj = false
+    constructor(name, conts, open=false) {
+        super(name)
+        this.conts = conts
+        this.open = open
+    }
+
+    makeObject() {
+        const elm = document.createElement("div")
+        return elm
+    }
+
+    static get cls() { return "dot" }
+    get sceneDef() {
+        if (!this._scrobj) {
+            this._scrobj = { labl: this.name, class: this.constructor.cls,
+                conts: this.conts, spec: this.spec }
+        }
+        return this._scrobj
+    }
 }

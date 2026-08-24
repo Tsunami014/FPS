@@ -88,45 +88,50 @@ function inspectElm(parent, data) {
     })
 }
 
-function loadTree(tree, data, parents) {
+function setupClickHandler(elm, sd) {
+    elm.onclick = ()=>{
+        const insp = document.getElementById("inspector")
+        insp.replaceChildren()
+        const titl = document.createElement("div")
+        titl.innerText = sd.labl
+        titl.classList.add("insptitle")
+        titl.classList.add("obj_"+sd.class)
+        insp.appendChild(titl)
+        if (sd.spec) inspectElm(insp, sd.spec)
+
+        // Remove selected if exists
+        const oldsel = document.querySelector('.scnsel')
+        if (oldsel) oldsel.classList.remove("scnsel")
+        // Add sel to this
+        elm.classList.add("scnsel")
+    }
+    elm.ondblclick = ()=>{
+        // Instantly go to the inspector
+        document.getElementById("side").className = "displinsp"
+        updateLTabSel()
+    }
+}
+function loadTree(tree, data, parentStage) {
     data.forEach(it=>{
         if (it.isObj) {
+            parentStage.appendChild(it.makeObject())
             const sd = it.sceneDef
             const elm = document.createElement("button")
             elm.classList.add("obj")
             elm.classList.add("obj_"+sd.class)
             elm.innerText = sd.labl
-            elm.onclick = ()=>{
-                const insp = document.getElementById("inspector")
-                insp.replaceChildren()
-                const titl = document.createElement("div")
-                titl.innerText = sd.labl
-                titl.classList.add("insptitle")
-                titl.classList.add("obj_"+sd.class)
-                insp.appendChild(titl)
-                if (sd.spec) inspectElm(insp, sd.spec)
-
-                // Remove selected if exists
-                document.querySelectorAll('.scnsel').forEach(elm=>{
-                    elm.classList.remove("scnsel")
-                })
-                // Add sel to this and all parents
-                elm.classList.add("scnsel")
-                parents.forEach(elm=>{ elm.classList.add("scnsel") })
-            }
-            elm.ondblclick = ()=>{
-                // Instantly go to the inspector
-                document.getElementById("side").className = "displinsp"
-                updateLTabSel()
-            }
+            setupClickHandler(elm, sd)
             tree.appendChild(elm)
         } else {
             const newtree = document.createElement("details")
             newtree.open = it.open
             const labl = document.createElement("summary")
-            labl.innerText = it.labl
+            labl.innerText = it.name
+            setupClickHandler(labl, it.sceneDef)
             newtree.appendChild(labl)
-            loadTree(newtree, it.conts, [...parents, labl])
+            const newstage = it.makeObject()
+            parentStage.appendChild(newstage)
+            loadTree(newtree, it.conts, newstage)
             tree.appendChild(newtree)
         }
     })
@@ -165,7 +170,9 @@ function updateTopSel(hash) {
 
     const stage = document.getElementById("stage")
     stage.replaceChildren()
-    loadTree(stage, SCREENS[hash.substr(1)], [])
+    const mainStage = document.getElementById("main")
+    mainStage.replaceChildren()
+    loadTree(stage, SCREENS[hash.substr(1)], mainStage)
 }
 
 { // When the page loads
