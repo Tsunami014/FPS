@@ -33,20 +33,28 @@ class TextObj extends Node2DObj {
     get spec() {
         return [
             { labl: "Text", bubble: true },
-            { labl: "Text", type: "multiline" },
-            { labl: "Text colour", type: "labl" },
-            { labl: "Width", type: "labl" },
+            { labl: "Contents", conts: [
+                { labl: "Text", type: "multiline" },
+                { labl: "Text colour", type: "col" },
+            ]},
+            { labl: "Width", type: "num" },
         null, ...super.spec]
     }
     static get cls() { return "text" }
 }
 
 class BannerObj extends TextObj {
+    get choices() {
+        return [
+            "image1.png",
+            "image2.png",
+        ]
+    }
     get spec() {
         return [
             { labl: "Banner", bubble: true },
-            { labl: "Background colour", type: "labl" },
-            { labl: "Border style", type: "labl" },
+            { labl: "Background colour", type: "col" },
+            { labl: "Border style", type: "opts", choices: this.choices },
         null, ...super.spec]
     }
     static get cls() { return "banner" }
@@ -56,7 +64,10 @@ class SectionObj extends TextObj {
     get spec() {
         return [
             { labl: "Section", bubble: true },
-            { labl: "Background style", type: "labl" },
+            { labl: "Background style", type: "opts", choices: [
+                "Regular",
+                "Cool",
+            ]},
         null, ...super.spec]
     }
     static get cls() { return "sect" }
@@ -76,10 +87,16 @@ class ImageObj extends Node2DObj {
 }
 
 class BackgroundObj extends Node2DObj {
+    get choices() {
+        return [
+            "image1.png",
+            "image2.png",
+        ]
+    }
     get spec() {
         return [
             { labl: "Background", bubble: true },
-            { labl: "Image", type: "labl" },
+            { labl: "Image", type: "opts", choices: this.choices },
         null, ...super.spec]
     }
     static get cls() { return "bg" }
@@ -88,12 +105,19 @@ class BackgroundObj extends Node2DObj {
 // -----
 
 
-class FAQObj extends TextObj {
+class FAQObj extends Node2DObj {
     get spec() {
         return [
             { labl: "FAQ Item", bubble: true },
-            { labl: "Question", type: "labl" },
-            { labl: "Answer", type: "labl" },
+            { labl: "Width", type: "num" },
+            { labl: "Question", conts: [
+                { labl: "Question", type: "multiline" },
+                { labl: "Question colour", type: "col" },
+            ]},
+            { labl: "Answer", conts: [
+                { labl: "Answer", type: "multiline" },
+                { labl: "Answer colour", type: "col" },
+            ]},
         null, ...super.spec]
     }
     static get cls() { return "info" }

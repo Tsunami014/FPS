@@ -2,3 +2,5 @@ config.py
 *.pyc
 build/*
 *.db
+*.db-shm
+*.db-wal

@@ -215,13 +215,14 @@ hr {
 label.item {
     display: block;
 }
-input[type=text], textarea {
+input, textarea, select {
     width: 100%;
-    resize: vertical;
-    padding: 3px 5px;
+    padding: 4px;
     border-radius: 8px;
     background-color: #DDD;
 }
-input[type=text]:focus, textarea {
+input[type=text], textarea, select { padding: 3px 5px; }
+textarea { resize: vertical; }
+input:focus, textarea:focus, select:open {
     background-color: #EEE;
 }

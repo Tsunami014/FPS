@@ -18,6 +18,9 @@ function inspectElm(parent, data) {
             switch (it.type) {
                 case "line":
                 case "multiline":
+                case "col":
+                case "num":
+                case "opts":
                     elm = document.createElement("label")
                     elm.innerText = it.labl
                     break;
@@ -44,6 +47,26 @@ function inspectElm(parent, data) {
                         break;
                     case "multiline":
                         inp = document.createElement("textarea")
+                        parent.appendChild(inp)
+                        break;
+                    case "col":
+                        inp = document.createElement("input")
+                        inp.type = "color" // Ew Americans
+                        parent.appendChild(inp)
+                        break;
+                    case "num":
+                        inp = document.createElement("input")
+                        inp.type = "number"
+                        parent.appendChild(inp)
+                        break;
+                    case "opts":
+                        inp = document.createElement("select")
+                        it.choices.forEach(val=>{
+                            opt = document.createElement("option")
+                            opt.value = val
+                            opt.innerText = val
+                            inp.appendChild(opt)
+                        })
                         parent.appendChild(inp)
                         break;
                 }
