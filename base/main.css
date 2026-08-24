@@ -227,3 +227,8 @@ textarea { resize: vertical; }
 input:focus, textarea:focus, select:open {
     background-color: #EEE;
 }
+
+.selmainobj {
+    outline: gray 3px dashed;
+    background-color: #6663;
+}

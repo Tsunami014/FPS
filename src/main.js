@@ -88,7 +88,7 @@ function inspectElm(parent, data) {
     })
 }
 
-function setupClickHandler(elm, sd) {
+function setupClickHandler(elm, mainelm, sd) {
     elm.onclick = ()=>{
         const insp = document.getElementById("inspector")
         insp.replaceChildren()
@@ -102,8 +102,11 @@ function setupClickHandler(elm, sd) {
         // Remove selected if exists
         const oldsel = document.querySelector('.scnsel')
         if (oldsel) oldsel.classList.remove("scnsel")
+        const oldsel2 = document.querySelector('.selmainobj')
+        if (oldsel2) oldsel2.classList.remove("selmainobj")
         // Add sel to this
         elm.classList.add("scnsel")
+        mainelm.classList.add("selmainobj")
     }
     elm.ondblclick = ()=>{
         // Instantly go to the inspector
@@ -114,23 +117,24 @@ function setupClickHandler(elm, sd) {
 function loadTree(tree, data, parentStage) {
     data.forEach(it=>{
         if (it.isObj) {
-            parentStage.appendChild(it.makeObject())
+            const melm = it.makeObject()
+            parentStage.appendChild(melm)
             const sd = it.sceneDef
             const elm = document.createElement("button")
             elm.classList.add("obj")
             elm.classList.add("obj_"+sd.class)
             elm.innerText = sd.labl
-            setupClickHandler(elm, sd)
+            setupClickHandler(elm, melm, sd)
             tree.appendChild(elm)
         } else {
             const newtree = document.createElement("details")
             newtree.open = it.open
             const labl = document.createElement("summary")
             labl.innerText = it.name
-            setupClickHandler(labl, it.sceneDef)
             newtree.appendChild(labl)
             const newstage = it.makeObject()
             parentStage.appendChild(newstage)
+            setupClickHandler(labl, newstage, it.sceneDef)
             loadTree(newtree, it.conts, newstage)
             tree.appendChild(newtree)
         }
