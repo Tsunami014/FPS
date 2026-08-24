@@ -1,5 +1,13 @@
-function connectValue(attrs, name, aftfn) {
-    return { value: attrs[name], conn: (v)=>{ attrs[name] = v; aftfn() } }
+function connectValue(obj, name) {
+    return {
+        get value() {
+            return obj.attrs[name]
+        },
+        conn(v) {
+            obj.attrs[name] = v
+            obj._style()
+        },
+    }
 }
 
 class Node2DObj {
@@ -8,11 +16,22 @@ class Node2DObj {
         this.name = name
         this.attrs = { ...this._defaults, ...attrs }
     }
-    get _defaults() { return {} }
+    get _defaults() { return {
+        x: 0,
+        y: 0,
+        rot: 0,
+    }}
 
+    _style(elm) {
+        const attrs = this.attrs
+        if (!elm) elm = this.mainobj
+        elm.style.translate = `${attrs.x}px ${attrs.y}px`
+        elm.style.rotate = `${attrs.rot}deg`
+    }
     _makeObject() {
         const elm = document.createElement("p")
         elm.innerText = "?"
+        this._style(elm)
         return elm
     }
     #_mobj = null
@@ -24,18 +43,15 @@ class Node2DObj {
     }
 
     get spec() {
+        const connval = (nam)=>connectValue(this, nam)
         return [
             { labl: "Node2D", bubble: true },
             { labl: "Position", conts: [
-                { labl: "X", type: "num" },
-                { labl: "Y", type: "num" },
+                { labl: "X", type: "num", ...connval("x") },
+                { labl: "Y", type: "num", ...connval("y") },
             ]},
             { labl: "Rotation", conts: [
-                { labl: "Rot", type: "num" },
-            ]},
-            { labl: "Scale", conts: [
-                { labl: "X", type: "num" },
-                { labl: "Y", type: "num" },
+                { labl: "Rot", type: "num", ...connval("rot") },
             ]},
         ]
     }
@@ -62,10 +78,11 @@ class TextObj extends Node2DObj {
     }}
     _makeObject() {
         const elm = document.createElement("p")
-        this.#style(elm)
+        this._style(elm)
         return elm
     }
-    #style(elm) {
+    _style(elm) {
+        super._style(elm)
         const attrs = this.attrs
         if (!elm) elm = this.mainobj
         elm.innerText = attrs.text
@@ -83,14 +100,14 @@ class TextObj extends Node2DObj {
         ]
     }
     get spec() {
-        const connval = (nam)=>connectValue(this.attrs, nam, ()=>this.#style())
+        const connval = (nam)=>connectValue(this, nam)
         return [
             { labl: "Text", bubble: true },
-            { labl: "Text", type: "multiline", ...connval("text") }
+            { labl: "Text", type: "multiline", ...connval("text") },
             { labl: "Style", conts: [
                 { labl: "Font size", type: "num", ...connval("text_size"), bound: [8, 100] },
-                { labl: "Font", type: "opts", choices: this.fonts, ...connval("text_font") }
-                { labl: "Text colour", type: "col", ...connval("text_colour") }
+                { labl: "Font", type: "opts", choices: this.fonts, ...connval("text_font") },
+                { labl: "Text colour", type: "col", ...connval("text_colour") },
             ]},
             { labl: "Width", type: "num", ...connval("max_width"), bound: [0, null] },
         null, ...super.spec]
@@ -138,17 +155,18 @@ class ImageObj extends Node2DObj {
     }}
     _makeObject() {
         const elm = document.createElement("img")
-        this.#style(elm)
+        this._style(elm)
         return elm
     }
-    #style(elm) {
+    _style(elm) {
+        super._style(elm)
         const attrs = this.attrs
         if (!elm) elm = this.mainobj
         elm.src = attrs.url
         elm.alt = attrs.alt
     }
     get spec() {
-        const connval = (nam)=>connectValue(this.attrs, nam, ()=>this.#style())
+        const connval = (nam)=>connectValue(this, nam)
         return [
             { labl: "Image", bubble: true },
             { labl: "URL", type: "line", ...connval("url") },
@@ -168,16 +186,17 @@ class BackgroundObj extends Node2DObj {
     }}
     _makeObject() {
         const elm = document.createElement("img")
-        this.#style(elm)
+        this._style(elm)
         return elm
     }
     get choices() {
         return {
-            "Thin kitten": ["https://www.placekittens.com/400/100", "A thin kitty"],
-            "Tall kitten": ["https://www.placekittens.com/100/400", "A tall kitty"],
+            "Thin kitten": ["https://www.placekittens.com/200/400", "A thin kitty"],
+            "Tall kitten": ["https://www.placekittens.com/300/150", "A tall kitty"],
         }
     }
-    #style(elm) {
+    _style(elm) {
+        super._style(elm)
         const attrs = this.attrs
         if (!elm) elm = this.mainobj
         elm.src = this.choices[attrs.img][0]
@@ -186,7 +205,7 @@ class BackgroundObj extends Node2DObj {
         elm.height = attrs.height
     }
     get spec() {
-        const connval = (nam)=>connectValue(this.attrs, nam, ()=>this.#style())
+        const connval = (nam)=>connectValue(this, nam)
         return [
             { labl: "Background", bubble: true },
             { labl: "Image", type: "opts", choices: Object.keys(this.choices), ...connval("img") },
@@ -221,17 +240,38 @@ class FAQObj extends Node2DObj {
 
 class Page extends Node2DObj {
     static isObj = false
-    constructor(name, conts, open=false) {
-        super(name)
+    constructor(name, conts, attrs) {
+        super(name, attrs)
         this.conts = conts
-        this.open = open
+        this.open = attrs?.open
     }
+    get _defaults() { return { ...super._defaults,
+        scale_x: 1,
+        scale_y: 1,
+    }}
 
+    _style(elm) {
+        super._style(elm)
+        const attrs = this.attrs
+        if (!elm) elm = this.mainobj
+        elm.style.scale = `${attrs.scale_x} ${attrs.scale_y}`
+    }
     _makeObject() {
         const elm = document.createElement("div")
+        elm.style.position = "absolute"
+        this._style(elm)
         return elm
     }
 
+    get spec() {
+        const connval = (nam)=>connectValue(this, nam)
+        return [...super.spec,
+            { labl: "Scale", conts: [
+                { labl: "X", type: "num", ...connval("scale_x") },
+                { labl: "Y", type: "num", ...connval("scale_y") },
+            ]},
+        ]
+    }
     static cls = "dot"
     #_scrobj = null
     get sceneDef() {

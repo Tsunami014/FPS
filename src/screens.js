@@ -13,20 +13,25 @@ const SCREENS = {
         new TextObj("Title", {
           text: "FPS",
         }),
-      ]),
+      ], {
+        x: 70, y: 125, rot: 12,
+      }),
       new Page("AboutPage", [
         new SectionObj("WhatIsThis"),
         new SectionObj("HowThisWorks"),
         new SectionObj("IsHackClubReal"),
         new SectionObj("AmIEligible"),
         new SectionObj("HowToJoin"),
-      ], true),
+      ], {
+        x: 90, y: 20, rot: -10,
+        open: true,
+      }),
       new Page("HelpSection", [
         new BackgroundObj("Background"),
         new FAQObj("FAQItem"),
         new FAQObj("FAQItem"),
-      ], true),
-    ], true),
+      ], { open: true, }),
+    ], { open: true, }),
   ],
   projects: [
   ],

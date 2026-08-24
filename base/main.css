@@ -56,7 +56,8 @@ body.mobile {
 }
 #main {
     background: #EFF2FF;
-    overflow: scroll;
+    z-index: -1;
+    overflow: clip;
 }
 
 #main * {
