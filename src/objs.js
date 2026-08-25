@@ -4,6 +4,7 @@ function connectValue(obj, name) {
         conn(v) {
             obj.attrs[name] = v
             obj._style()
+            updFocus()
         },
     }
 }

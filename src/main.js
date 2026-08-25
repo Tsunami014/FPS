@@ -128,11 +128,13 @@ function inspectElm(parent, data) {
 function deselect() {
     const oldsel = document.querySelector('.scnsel')
     if (oldsel) oldsel.classList.remove("scnsel")
-    const oldsel2 = document.querySelector('.selmainobj')
-    if (oldsel2) oldsel2.classList.remove("selmainobj")
+    document.getElementById("mainSelect").style.display = "none"
 }
-function setupClickHandler(elm, it) {
-    elm.onclick = ()=>{
+function setupClickHandler(elm, it, isObj) {
+    elm.onclick = (e)=>{
+        if (!elm.classList.contains("scnsel")) {
+            e.preventDefault()
+        }
         const sd = it.sceneDef
 
         const insp = document.getElementById("inspector")
@@ -147,14 +149,15 @@ function setupClickHandler(elm, it) {
         if (sd.spec) inspectElm(insp, sd.spec)
 
         deselect()
-        // Add sel to this
         elm.classList.add("scnsel")
-        it.mainobj.classList.add("selmainobj")
+        focusOn(it.mainobj, isObj? it.mainobj.parentElement : it.mainobj)
     }
-    elm.ondblclick = ()=>{
-        // Instantly go to the inspector
-        document.getElementById("side").className = "displinsp"
-        updateLTabSel()
+    if (isObj) {
+        elm.ondblclick = ()=>{
+            // Instantly go to the inspector
+            document.getElementById("side").className = "displinsp"
+            updateLTabSel()
+        }
     }
 }
 function loadTree(tree, data, parentStage) {
@@ -166,7 +169,7 @@ function loadTree(tree, data, parentStage) {
             elm.classList.add("obj")
             elm.classList.add("obj_"+sd.class)
             elm.innerText = sd.labl
-            setupClickHandler(elm, it)
+            setupClickHandler(elm, it, true)
             tree.appendChild(elm)
         } else {
             const newtree = document.createElement("details")
@@ -175,7 +178,7 @@ function loadTree(tree, data, parentStage) {
             labl.innerText = it.name
             newtree.appendChild(labl)
             parentStage.appendChild(it.mainobj)
-            setupClickHandler(labl, it)
+            setupClickHandler(labl, it, false)
             loadTree(newtree, it.conts, it.mainobj)
             tree.appendChild(newtree)
         }
@@ -199,7 +202,6 @@ function updateLTabSel() {
 
 
 const stage = document.getElementById("stage")
-const mainStage = document.getElementById("main")
 function updateTopSel(hash) {
     hash = hash || "#main"
     // Remove selected element if already exists
@@ -218,6 +220,10 @@ function updateTopSel(hash) {
     stage.replaceChildren()
     mainStage.replaceChildren()
     loadTree(stage, SCREENS[hash.substr(1)], mainStage)
+    const nsel = document.createElement("div")
+    nsel.id = "mainSelect"
+    nsel.style.position = "absolute"
+    mainStage.appendChild(nsel)
 }
 
 { // Stuff that runs instantly

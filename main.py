@@ -1,4 +1,4 @@
-from flask import Flask, request, Response, redirect, jsonify
+from flask import Flask, request, redirect, jsonify
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from urllib.parse import quote_plus
@@ -12,7 +12,7 @@ sqliteLimiter.register() # No-op to stop the linter from complaining
 
 print("Minifying website...")
 for cmd in (
-    "cat src/user.js src/objs.js src/screens.js src/camera.js src/main.js | minify --type js -o build/index.js",
+    "cat src/user.js src/camera.js src/objs.js src/screens.js src/main.js | minify --type js -o build/index.js",
     "minify base/main.html -o build/index.html",
     "minify base/main.css -o build/index.css",
     ):
@@ -26,6 +26,8 @@ for src in SOURCE.rglob("*"):
     if not src.is_file():
         continue
 
+    dest = DEST / src.relative_to(SOURCE).with_suffix(".webp")
+    print(f"{src} -> {dest}")
     with Image.open(src) as img:
         # Convert modes WebP can handle reliably
         if img.mode not in ("RGB", "RGBA"):
@@ -34,10 +36,8 @@ for src in SOURCE.rglob("*"):
             else:
                 img = img.convert("RGB")
 
-        dest = DEST / src.relative_to(SOURCE).with_suffix(".webp")
         dest.parent.mkdir(parents=True, exist_ok=True)
         img.save(dest, "WEBP", quality=80, method=6)
-        print(f"{src} -> {dest}")
 
 print("Finished building!")
 
