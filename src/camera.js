@@ -1,59 +1,63 @@
 const mainStage = document.getElementById("main")
 
-var camtrans = {
-    x: 0, y: 0, rot: 0, scale: 1
-}
-function applyCamera() {
-    mainStage.style.transform =
-        `translate(${camtrans.x}px, ${camtrans.y}px) rotate(${camtrans.rot}deg) scale(${camtrans.scale})`
-}
-
 function getRotRect(elm) {
-    var rot = 0
-    let curelm = elm
+    var thisrot = 0
+    {
+        const m = elm.style.rotate.match(/^([0-9.\-]+)deg$/)
+        if (m) thisrot = parseFloat(m[1])
+    }
+    var rot = thisrot
+    let curelm = elm.parentElement
     while (curelm && curelm !== document.body) {
         const m = curelm.style.rotate.match(/^([0-9.\-]+)deg$/)
         if (m) rot += parseFloat(m[1])
         curelm = curelm.parentElement
     }
+    elm.style.rotate = (thisrot - rot) + 'deg'
 
-    const marker = document.createElement('div');
-    marker.id = "positionP"
-    elm.appendChild(marker);
-    const mrect = marker.getBoundingClientRect();
-    elm.removeChild(marker);
+    var minL = Infinity
+    var maxR = -Infinity
+    var minT = Infinity
+    var maxB = -Infinity
+    if (elm.tagName !== 'DIV') {
+        const thisr = elm.getBoundingClientRect()
+        minL = thisr.left
+        maxR = thisr.right
+        minT = thisr.top
+        maxB = thisr.bottom
+    }
+    elm.querySelectorAll('*:not(div)').forEach(e=>{
+        const r = e.getBoundingClientRect()
+        minL = Math.min(r.left, minL)
+        maxR = Math.max(r.right, maxR)
+        minT = Math.min(r.top, minT)
+        maxB = Math.max(r.bottom, maxB)
+    })
 
-    const s = getComputedStyle(elm)
+    elm.style.rotate = thisrot + 'deg'
+
     const parentr = mainStage.getBoundingClientRect()
     return {
         rot: rot,
-        x: mrect.left - parentr.x,
-        y: mrect.top - parentr.y,
-        width: parseFloat(s.width),
-        height: parseFloat(s.height),
+        x: minL,
+        y: minT,
+        width: maxR - minL,
+        height: maxB - minT,
     }
 }
 
-var focussing;
+var focussing
 function focusOn(elm, zoomon) {
     focussing = { elm: elm, zoomon: zoomon }
     updFocus()
 }
 function updFocus() {
+    const box = getRotRect(focussing.elm)
     const sel = document.getElementById("mainSelect")
-    sel.style.display = "block"
-    const srr = getRotRect(focussing.elm)
-    sel.style.translate = `${srr.x-1}px ${srr.y-1}px`
-    sel.style.rotate = `${srr.rot}deg`
-    sel.style.width = `${srr.width+2}px`
-    sel.style.height = `${srr.height+2}px`
-
-    const zrr = getRotRect(focussing.zoomon)
-    const mainR = mainStage.getBoundingClientRect()
-    camtrans = {
-        x: -zrr.x, y: -zrr.y,
-        rot: -zrr.rot,
-        scale: 1//Math.min(mainR.width / zrr.width, mainR.height / zrr.height),
-    }
-    applyCamera()
+    sel.style.display = ""
+    sel.style.left = (box.x-3) + 'px'
+    sel.style.top = (box.y-3) + 'px'
+    sel.style.width = box.width + 'px'
+    sel.style.height = box.height + 'px'
+    sel.style.rotate = `${box.rot}deg`
 }

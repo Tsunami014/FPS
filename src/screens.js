@@ -14,7 +14,7 @@ const SCREENS = {
           text: "FPS",
         }),
       ], {
-        x: 70, y: 125, rot: 12,
+        x: 12, y: 0, rot: 0,
       }),
       new Page("AboutPage", [
         new SectionObj("WhatIsThis"),
@@ -23,14 +23,17 @@ const SCREENS = {
         new SectionObj("AmIEligible"),
         new SectionObj("HowToJoin"),
       ], {
-        x: 400, y: 20, rot: -10,
+        x: 400, y: -200, rot: 14,
         open: true,
       }),
       new Page("HelpSection", [
         new BackgroundObj("Background"),
         new FAQObj("FAQItem"),
         new FAQObj("FAQItem"),
-      ], { open: true, }),
+      ], {
+        x: 100, y: -400, rot: -5,
+        open: true,
+      }),
     ], { open: true, }),
   ],
   projects: [

@@ -252,7 +252,6 @@ class Page extends Node2DObj {
     }
     _makeObject() {
         const elm = document.createElement("div")
-        elm.style.position = "absolute"
         this._style(elm)
         return elm
     }
