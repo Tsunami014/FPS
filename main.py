@@ -2,22 +2,46 @@ from flask import Flask, request, Response, redirect, jsonify
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from urllib.parse import quote_plus
+from pathlib import Path
+from PIL import Image
 import os
 import requests
 import config
 import sqliteLimiter # Only needs to be imported to use sqlite storage in the Limiter!
 sqliteLimiter.register() # No-op to stop the linter from complaining
 
+print("Minifying website...")
 for cmd in (
-    "cat src/user.js src/objs.js src/screens.js src/main.js | minify --type js -o build/index.js",
+    "cat src/user.js src/objs.js src/screens.js src/camera.js src/main.js | minify --type js -o build/index.js",
     "minify base/main.html -o build/index.html",
     "minify base/main.css -o build/index.css",
     ):
     if os.system(cmd) != 0:
         raise RuntimeError("Command failed!")
+
+print("Minifying images...")
+SOURCE = Path("assets")
+DEST = Path("build/imgs")
+for src in SOURCE.rglob("*"):
+    if not src.is_file():
+        continue
+
+    with Image.open(src) as img:
+        # Convert modes WebP can handle reliably
+        if img.mode not in ("RGB", "RGBA"):
+            if img.mode == "LA" or "transparency" in img.info:
+                img = img.convert("RGBA")
+            else:
+                img = img.convert("RGB")
+
+        dest = DEST / src.relative_to(SOURCE).with_suffix(".webp")
+        dest.parent.mkdir(parents=True, exist_ok=True)
+        img.save(dest, "WEBP", quality=80, method=6)
+        print(f"{src} -> {dest}")
+
 print("Finished building!")
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder="build", static_url_path="")
 limiter = Limiter(get_remote_address, app=app,
     storage_uri="sqlite:///limiter.db", default_limits=["200 per minute"])
 
@@ -43,19 +67,9 @@ def login():
 
 with open("build/index.html") as f:
     HTML = f.read()
-with open("build/index.js") as f:
-    JS = f.read()
-with open("build/index.css") as f:
-    CSS = f.read()
 @app.route('/', methods=['GET'])
 def mainhtml():
     return HTML
-@app.route('/index.js', methods=['GET'])
-def mainjs():
-    return Response(JS, mimetype='text/javascript')
-@app.route('/index.css', methods=['GET'])
-def maincss():
-    return Response(CSS, mimetype='text/css')
 
 if __name__ == '__main__':
     app.run(port="9876")

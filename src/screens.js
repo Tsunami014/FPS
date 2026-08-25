@@ -7,7 +7,7 @@ const SCREENS = {
           text_size: 28,
         }),
         new ImageObj("BannerImage", {
-          url: "https://www.placekittens.com/200/200",
+          url: "/imgs/square.webp",
           alt: "A cute kitten!",
         }),
         new TextObj("Title", {
@@ -23,7 +23,7 @@ const SCREENS = {
         new SectionObj("AmIEligible"),
         new SectionObj("HowToJoin"),
       ], {
-        x: 90, y: 20, rot: -10,
+        x: 400, y: 20, rot: -10,
         open: true,
       }),
       new Page("HelpSection", [

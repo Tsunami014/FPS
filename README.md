@@ -6,6 +6,6 @@ A Hack club YSWS (You Ship We Ship) I plan on doing at some point
 - It gets built to `index.html`, `index.css` and `index.js`
 
 ## Running
-You will need `minify` and `python` installed together and the `requests flask flask-limiter` python packages installed.
+You will need `minify` and `python` installed together and the `requests flask flask-limiter Pillow` python packages installed.
 
 To start, copy the `config.example.py` to `config.py` and change things as required.

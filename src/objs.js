@@ -144,7 +144,7 @@ class SectionObj extends TextObj {
 
 class ImageObj extends Node2DObj {
     get _defaults() { return { ...super._defaults,
-        url: "https://www.placekittens.com/300/200",
+        url: "/imgs/square.webp",
         alt: "An image you forgot to add alt text for",
     }}
     _makeObject() {
@@ -185,8 +185,8 @@ class BackgroundObj extends Node2DObj {
     }
     get choices() {
         return {
-            "Thin kitten": ["https://www.placekittens.com/200/400", "A thin kitty"],
-            "Tall kitten": ["https://www.placekittens.com/300/150", "A tall kitty"],
+            "Thin kitten": ["/imgs/flat.webp", "A thin kitty"],
+            "Tall kitten": ["/imgs/tall.webp", "A tall kitty"],
         }
     }
     _style(elm) {
@@ -240,15 +240,14 @@ class Page extends Node2DObj {
         this.open = attrs?.open
     }
     get _defaults() { return { ...super._defaults,
-        scale_x: 1,
-        scale_y: 1,
+        scale: 1,
     }}
 
     _style(elm) {
         super._style(elm)
         const attrs = this.attrs
         if (!elm) elm = this.mainobj
-        elm.style.scale = `${attrs.scale_x} ${attrs.scale_y}`
+        elm.style.scale = attrs.scale
     }
     _makeObject() {
         const elm = document.createElement("div")
@@ -261,8 +260,7 @@ class Page extends Node2DObj {
         const connval = (nam)=>connectValue(this, nam)
         return [...super.spec,
             { labl: "Scale", conts: [
-                { labl: "X", type: "num", ...connval("scale_x") },
-                { labl: "Y", type: "num", ...connval("scale_y") },
+                { labl: "Scale", type: "num", ...connval("scale") },
             ]},
         ]
     }
