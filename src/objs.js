@@ -57,11 +57,11 @@ class Node2DObj extends BaseObj {
         return [
             { labl: "Node2D", bubble: true },
             { labl: "Position", conts: [
-                { labl: "X", type: "num", ...connval("x") },
-                { labl: "Y", type: "num", ...connval("y") },
+                { labl: "X", type: "num", ...connval("x"), step: 3 },
+                { labl: "Y", type: "num", ...connval("y"), step: 3 },
             ]},
             { labl: "Rotation", conts: [
-                { labl: "Rot", type: "num", ...connval("rot") },
+                { labl: "Rot", type: "num", ...connval("rot"), step: 2 },
             ]},
         ]
     }
@@ -286,7 +286,7 @@ class Page extends Node2DObj {
         const connval = (nam)=>connectValue(this, nam)
         return [...super.spec,
             { labl: "Scale", conts: [
-                { labl: "Scale", type: "num", ...connval("scale") },
+                { labl: "Scale", type: "num", ...connval("scale"), step: 0.03 },
             ]},
         ]
     }

@@ -87,6 +87,7 @@ function inspectElm(parent, data) {
                                 it.conn(val)
                             }
                         }
+                        if (it.step) inp.step = it.step
                         if (it.bound) {
                             inp.onchange = (e)=>{
                                 e.target.value = clamp(e.target.value, it.bound[0], it.bound[1])
