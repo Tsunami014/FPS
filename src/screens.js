@@ -48,7 +48,9 @@ SCREENS = {
         open: true,
       }),
       new Page("HelpSection", [
-        new BackgroundObj("Background"),
+        new BackgroundObj("Background", {
+          width: 300,
+        }),
         new FAQObj("FAQItem"),
         new FAQObj("FAQItem"),
       ], {

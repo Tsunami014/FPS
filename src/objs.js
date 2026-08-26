@@ -160,7 +160,7 @@ class BannerObj extends TextObj {
         text_width: false,
     }}
     get _defaults() { return { ...super._defaults,
-        width: 500,
+        width: 0,
         height: 0,
         background_style: this.choices[0],
         background_col: "#CCCCCC",
@@ -171,8 +171,12 @@ class BannerObj extends TextObj {
         if (!elm) elm = this.mainobj
         // TODO: Background style
         elm.style.backgroundColor = attrs.background_col
-        elm.style.maxWidth = "unset"
-        elm.style.width = attrs.width
+        elm.style.width = attrs.width==0? "fit-content" : attrs.width
+        if (attrs.width == 0) {
+            elm.style.maxWidth = ""
+        } else {
+            elm.style.maxWidth = elm.style.width
+        }
         elm.style.height = attrs.height==0? "fit-content" : attrs.height
     }
     get spec() {
@@ -180,7 +184,7 @@ class BannerObj extends TextObj {
         return [
             { labl: "Banner", bubble: true },
             { labl: "Width", type: "num", ...connval("width"),
-                bound: [1, null], step: 5 },
+                bound: [0, null], step: 5 },
             { labl: "Height", type: "num", ...connval("height"),
                 bound: [0, null], step: 5 },
             { labl: "Style", conts: [
@@ -213,9 +217,18 @@ class ImageObj extends Node2DObj {
     get _defaults() { return { ...super._defaults,
         url: "/imgs/square.webp",
         alt: "An image you forgot to add alt text for",
+        width: 0,
+        height: 0,
     }}
     _makeObject() {
         const elm = document.createElement("img")
+        function afterconn() {
+            setTimeout(updFocus, 100)
+        }
+        if (elm.complete) {
+            afterconn()
+        }
+        elm.addEventListener('load', afterconn)
         this._style(elm)
         return elm
     }
@@ -225,31 +238,39 @@ class ImageObj extends Node2DObj {
         if (!elm) elm = this.mainobj
         elm.src = attrs.url
         elm.alt = attrs.alt
+        elm.style.width = attrs.width==0? "fit-content" : attrs.width
+        elm.style.maxWidth = elm.style.width
+        elm.style.height = attrs.height==0? "fit-content" : attrs.height
     }
     get spec() {
         const connval = (nam)=>connectValue(this, nam)
+        const cats = this.constructor._catrs
         return [
             { labl: "Image", bubble: true },
-            { labl: "URL", type: "line", ...connval("url") },
-            { labl: "Alt text", type: "line", ...connval("alt") },
+            { labl: "URL", type: "line", ...connval("url"),
+                show: cats?.img_url },
+            { labl: "Alt text", type: "line", ...connval("alt"),
+                show: cats?.img_alt },
+            { labl: "Size", conts: [
+                { labl: "Width", type: "num", ...connval("width"),
+                    bound: [0, null], step: 5 },
+                { labl: "Height", type: "num", ...connval("height"),
+                    bound: [0, null], step: 5 },
+            ]}
         null, ...super.spec]
     }
     static cls = "img"
 }
 
-class BackgroundObj extends Node2DObj {
+class BackgroundObj extends ImageObj {
     get _defaults() {
-        const cs = Object.keys(this.choices)
         return { ...super._defaults,
-        img: cs[Math.floor(Math.random() * cs.length)],
-        width: 300,
-        height: 300,
+        img: Object.keys(this.choices)[0],
     }}
-    _makeObject() {
-        const elm = document.createElement("img")
-        this._style(elm)
-        return elm
-    }
+    static get _catrs() { return { ...super._catrs,
+        img_url: false,
+        img_alt: false,
+    }}
     get choices() {
         return {
             "Thin kitten": ["/imgs/flat.webp", "A thin kitty"],
@@ -257,13 +278,10 @@ class BackgroundObj extends Node2DObj {
         }
     }
     _style(elm) {
+        const choice = this.choices[this.attrs.img]
+        this.attrs.url = choice[0]
+        this.attrs.alt = choice[1]
         super._style(elm)
-        const attrs = this.attrs
-        if (!elm) elm = this.mainobj
-        elm.src = this.choices[attrs.img][0]
-        elm.alt = this.choices[attrs.img][1]
-        elm.width = attrs.width
-        elm.height = attrs.height
     }
     get spec() {
         const connval = (nam)=>connectValue(this, nam)
