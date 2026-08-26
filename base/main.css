@@ -58,21 +58,28 @@ body.mobile {
 #main {
     background: #EFF2FF;
     overflow: hidden;
-    transition: transform 0.6s ease;
 }
 #top, #side { z-index: 1; }
 
+#viewp {
+    position: absolute;
+    transform-origin: 0 0;
+    /*transition: translate 0.6s ease, rotate 0.6s ease, scale 0.6s ease;*/
+}
 #main * {
     max-width: fit-content;
 }
 #main p { overflow-wrap: break-word; }
 
 #mainSelect {
+    position: absolute;
     border: gray 3px dashed;
+    box-sizing: border-box;
     background-color: #6663;
     max-width: unset;
     display: block;
-    position: fixed;
+    pointer-events: none;
+    z-index: 1;
 }
 
 

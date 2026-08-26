@@ -128,7 +128,7 @@ function inspectElm(parent, data) {
 function deselect() {
     const oldsel = document.querySelector('.scnsel')
     if (oldsel) oldsel.classList.remove("scnsel")
-    document.getElementById("mainSelect").style.display = "none"
+    msel.style.display = "none"
 }
 function setupClickHandler(elm, it, isObj) {
     elm.onclick = (e)=>{
@@ -218,12 +218,8 @@ function updateTopSel(hash) {
     updateLTabSel()
 
     stage.replaceChildren()
-    mainStage.replaceChildren()
-    loadTree(stage, SCREENS[hash.substr(1)], mainStage)
-    const nsel = document.createElement("div")
-    nsel.id = "mainSelect"
-    nsel.style.position = "absolute"
-    mainStage.appendChild(nsel)
+    viewp.replaceChildren(msel)
+    loadTree(stage, SCREENS[hash.substr(1)], viewp)
 }
 
 { // Stuff that runs instantly
