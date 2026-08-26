@@ -1,6 +1,6 @@
 const SCREENS = {
   home: [
-    new Page("Stage", [
+    new BasePage("Stage", [
       new Page("TitlePage", [
         new BannerObj("Announcements", {
           text: "Announcement!",

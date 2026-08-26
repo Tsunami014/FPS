@@ -9,24 +9,15 @@ function connectValue(obj, name) {
     }
 }
 
-class Node2DObj {
+class BaseObj {
     static isObj = true
     constructor(name, attrs) {
         this.name = name
         this.attrs = { ...this._defaults, ...attrs }
     }
-    get _defaults() { return {
-        x: 0,
-        y: 0,
-        rot: 0,
-    }}
+    get _defaults() { return {} }
 
-    _style(elm) {
-        const attrs = this.attrs
-        if (!elm) elm = this.mainobj
-        elm.style.translate = `${attrs.x}px ${attrs.y}px`
-        elm.style.rotate = `${attrs.rot}deg`
-    }
+    _style(elm) {}
     _makeObject() {
         const elm = document.createElement("p")
         elm.innerText = "?"
@@ -39,6 +30,26 @@ class Node2DObj {
             this.#_mobj = this._makeObject()
         }
         return this.#_mobj
+    }
+
+    get spec() { return [] }
+    static cls = "misc"
+    get sceneDef() {
+        return { labl: this.name, class: this.constructor.cls, spec: this.spec }
+    }
+}
+class Node2DObj extends BaseObj {
+    get _defaults() { return {
+        x: 0,
+        y: 0,
+        rot: 0,
+    }}
+
+    _style(elm) {
+        const attrs = this.attrs
+        if (!elm) elm = this.mainobj
+        elm.style.translate = `${attrs.x}px ${attrs.y}px`
+        elm.style.rotate = `${attrs.rot}deg`
     }
 
     get spec() {
@@ -233,6 +244,21 @@ class FAQObj extends Node2DObj {
 // -----
 
 
+class BasePage extends BaseObj {
+    static isObj = false
+    constructor(name, conts, attrs) {
+        super(name, attrs)
+        this.conts = conts
+        this.open = attrs?.open
+    }
+
+    _makeObject() { return document.createElement("div") }
+    static cls = "dot"
+    get sceneDef() {
+        return { labl: this.name, class: this.constructor.cls,
+            conts: this.conts, spec: this.spec }
+    }
+}
 class Page extends Node2DObj {
     static isObj = false
     constructor(name, conts, attrs) {
