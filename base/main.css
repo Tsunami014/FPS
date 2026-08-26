@@ -55,9 +55,13 @@ body.mobile {
     background: #BBB;
     overflow-y: scroll;
 }
-#main {
+#main, #overl {
     background: #EFF2FF;
     overflow: hidden;
+}
+#overl.hide {
+    width: 100%;
+    height: 100%;
 }
 #top, #side { z-index: 1; }
 
@@ -69,7 +73,10 @@ body.mobile {
 #main * {
     max-width: fit-content;
 }
-#main p { overflow-wrap: break-word; }
+#main p {
+    overflow-wrap: break-word;
+    text-align: center;
+}
 
 #mainSelect {
     position: absolute;
@@ -240,11 +247,21 @@ hr {
 label.item {
     display: block;
 }
-input, textarea, select {
+input:not([type=checkbox]), textarea, select {
     width: 100%;
     padding: 4px;
     border-radius: 8px;
     background-color: #DDD;
+}
+fieldset.item {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+label.initem {
+    display: inline-block;
+    white-space: pre-wrap;
+    margin: 3px 5px;
 }
 input[type=text], textarea, select { padding: 3px 5px; }
 textarea { resize: vertical; }

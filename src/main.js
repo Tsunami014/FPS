@@ -24,6 +24,8 @@ function inspectElm(parent, data) {
     data.forEach(it=>{
         if (it === null) {
             parent.appendChild(document.createElement("hr"))
+        } else if (it.show === false) {
+            return;
         } else if (it.type) {
             var elm
             var conn
@@ -36,6 +38,39 @@ function inspectElm(parent, data) {
                 case "opts":
                     elm = document.createElement("label")
                     elm.innerText = it.labl
+                    break;
+                case "multiopts":
+                    elm = document.createElement("fieldset")
+                    const labl = document.createElement("legend")
+                    labl.innerText = it.labl
+                    elm.appendChild(labl)
+                    const sels = it.value? it.value : []
+                    it.choices.forEach((val,idx)=>{
+                        if (idx != 0) {
+                            const space = document.createElement("div")
+                            space.className = "flexSpacer"
+                            elm.appendChild(space)
+                        }
+                        const innrlabl = document.createElement("label")
+                        innrlabl.className = "initem"
+                        const opt = document.createElement("input")
+                        opt.type = "checkbox"
+                        opt.checked = sels.includes(val)
+                        innrlabl.appendChild(opt)
+                        innrlabl.append(val)
+                        elm.appendChild(innrlabl)
+                        if (it.conn) {
+                            opt.addEventListener('change', ()=>{
+                                const index = sels.indexOf(val)
+                                if (opt.checked) {
+                                    if (index === -1) sels.push(val)
+                                } else {
+                                    if (index !== -1) sels.splice(index, 1)
+                                }
+                                it.conn(sels)
+                            });
+                        }
+                    })
                     break;
                 case "labl":
                     elm = document.createElement("div")
@@ -203,7 +238,10 @@ function updateLTabSel() {
 
 
 const stage = document.getElementById("stage")
+const overl = document.getElementById("overl")
 function updateTopSel(hash) {
+    overl.classList.add("hide")
+
     hash = hash || "#main"
     // Remove selected element if already exists
     const sel = document.querySelector('a.sel')
@@ -220,11 +258,27 @@ function updateTopSel(hash) {
 
     stage.replaceChildren()
     viewp.replaceChildren(msel)
-    loadTree(stage, SCREENS[hash.substr(1)], viewp)
+    var scrn = SCREENS[hash.substr(1)]
+    if (!scrn) scrn = SCREENS["404"]
+    loadTree(stage, scrn[1], viewp)
+
+    setTimeout(() => {
+        overl.classList.remove("hide")
+        const def = document.getElementById("default")
+        focusOn(null, def, true)
+    }, 100)
 }
 
 { // Stuff that runs instantly
-    updateTopSel(location.hash)
+    // Auto generate top tabs
+    const toptabs = document.getElementById("top")
+    for (const [ref, val] of Object.entries(SCREENS)) {
+        if (val[0] === null) continue;
+        const t = document.createElement("a")
+        t.href = "#"+ref
+        t.innerText = val[0]
+        toptabs.appendChild(t)
+    }
     // Auto generate side tab buttons
     const tabbar = document.getElementById("sidetabs")
     const side = document.getElementById("side")
@@ -242,6 +296,9 @@ function updateTopSel(hash) {
     side.className = ltabbtns[0][1]
     updateLTabSel()
     mainStage.addEventListener('click', deselect)
+
+    // Update the main page for the current page
+    updateTopSel(location.hash)
 }
 // When page navigation occurs
 navigation.addEventListener('navigate', ()=>{

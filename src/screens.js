@@ -1,10 +1,30 @@
-const SCREENS = {
-  home: [
+var extra;
+if (loggedIn) {
+  extra = {
+    projects: ["Projects", [
+    ]],
+    shop: ["Shop", [
+    ]],
+    settings: ["Settings", [
+    ]],
+  }
+} else {
+  extra = {
+    login: ["Log In", [
+    ]],
+  }
+}
+SCREENS = {
+  home: [null, [ // Already in the html
     new BasePage("Stage", [
       new Page("TitlePage", [
         new BannerObj("Announcements", {
           text: "Announcement!",
           text_size: 28,
+          x: -30,
+          width: 270,
+          height: 65,
+          text_style: ["Italics", "Small Caps"],
         }),
         new ImageObj("BannerImage", {
           url: "/imgs/square.webp",
@@ -15,6 +35,7 @@ const SCREENS = {
         }),
       ], {
         x: 12, y: 0, rot: 0,
+        default: true,
       }),
       new Page("AboutPage", [
         new SectionObj("WhatIsThis"),
@@ -35,11 +56,25 @@ const SCREENS = {
         open: true,
       }),
     ], { open: true, }),
-  ],
-  projects: [
-  ],
-  shop: [
-  ],
-  settings: [
-  ],
-}
+  ]],
+  "404": [null, [
+    new BasePage("Stage", [
+      new Page("404Page", [
+        new BannerObj("Whoops", {
+          text: "Whoops!",
+          text_size: 28,
+          x: -30,
+          width: 270,
+          text_style: ["Italics"],
+        }),
+        new TextObj("Text", {
+          text: "You seem to have gotten lost, as this page is not accessible for you.\n\
+Maybe try going home?",
+          max_width: 200,
+        }),
+      ], {
+        open: true, default: true,
+      }),
+    ], { open: true, }),
+  ]],
+...extra }

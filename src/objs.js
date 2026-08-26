@@ -15,9 +15,16 @@ class BaseObj {
         this.name = name
         this.attrs = { ...this._defaults, ...attrs }
     }
-    get _defaults() { return {} }
+    static get _catrs() { return {} }
+    get _defaults() { return {
+        default: false
+    }}
 
-    _style(elm) {}
+    _style(elm) {
+        if (this.attrs.default) {
+            (elm? elm : this.mainobj).id = "default"
+        }
+    }
     _makeObject() {
         const elm = document.createElement("p")
         elm.innerText = "?"
@@ -39,13 +46,14 @@ class BaseObj {
     }
 }
 class Node2DObj extends BaseObj {
-    get _defaults() { return {
+    get _defaults() { return { ...super._defaults,
         x: 0,
         y: 0,
         rot: 0,
     }}
 
     _style(elm) {
+        super._style(elm)
         const attrs = this.attrs
         if (!elm) elm = this.mainobj
         elm.style.translate = `${attrs.x}px ${attrs.y}px`
@@ -79,6 +87,7 @@ class TextObj extends Node2DObj {
         text: "Placeholder",
         text_size: 18,
         text_font: "Monospace",
+        text_style: [],
         text_colour: "#222222",
         max_width: 0,
     }}
@@ -90,12 +99,17 @@ class TextObj extends Node2DObj {
     _style(elm) {
         super._style(elm)
         const attrs = this.attrs
+        const cats = this.constructor._catrs
         if (!elm) elm = this.mainobj
         elm.innerText = attrs.text
         elm.style.fontSize = `${attrs.text_size}px`
         elm.style.fontFamily = attrs.text_font
         elm.style.color = attrs.text_colour
-        elm.style.maxWidth = attrs.max_width==0? "" : `${attrs.max_width}px`
+        elm.style.fontWeight = attrs.text_style.includes("Bold")? "bold":""
+        elm.style.fontStyle = attrs.text_style.includes("Italics")? "italic":""
+        elm.style.fontVariant = attrs.text_style.includes("Small Caps")? "small-caps":""
+        elm.style.textDecoration = attrs.text_style.includes("Underline")? "underline":""
+        if (cats?.text_width !== false) elm.style.maxWidth = attrs.max_width==0? "" : attrs.max_width +'px'
     }
     get fonts() {
         return [
@@ -105,17 +119,31 @@ class TextObj extends Node2DObj {
             "Monospace",
         ]
     }
+    get styles() {
+        return [
+            "Bold",
+            "Italics",
+            "Underline",
+            "Small Caps",
+        ]
+    }
     get spec() {
         const connval = (nam)=>connectValue(this, nam)
+        const cats = this.constructor._catrs
         return [
             { labl: "Text", bubble: true },
             { labl: "Text", type: "multiline", ...connval("text") },
             { labl: "Style", conts: [
-                { labl: "Font size", type: "num", ...connval("text_size"), bound: [8, 100] },
-                { labl: "Font", type: "opts", choices: this.fonts, ...connval("text_font") },
+                { labl: "Font size", type: "num", ...connval("text_size"),
+                    bound: [8, 100] },
+                { labl: "Font", type: "opts", ...connval("text_font"),
+                    choices: this.fonts },
                 { labl: "Text colour", type: "col", ...connval("text_colour") },
+                { labl: "Style", type: "multiopts", ...connval("text_style"),
+                    choices: this.styles },
             ]},
-            { labl: "Width", type: "num", ...connval("max_width"), bound: [0, null] },
+            { labl: "Width", type: "num", ...connval("max_width"),
+                bound: [0, null], step: 5, show: cats?.text_width },
         null, ...super.spec]
     }
     static cls = "text"
@@ -124,15 +152,42 @@ class TextObj extends Node2DObj {
 class BannerObj extends TextObj {
     get choices() {
         return [
-            "image1.png",
-            "image2.png",
+            "style1",
+            "style2",
         ]
     }
+    static get _catrs() { return { ...super._catrs,
+        text_width: false,
+    }}
+    get _defaults() { return { ...super._defaults,
+        width: 500,
+        height: 0,
+        background_style: this.choices[0],
+        background_col: "#CCCCCC",
+    }}
+    _style(elm) {
+        super._style(elm)
+        const attrs = this.attrs
+        if (!elm) elm = this.mainobj
+        // TODO: Background style
+        elm.style.backgroundColor = attrs.background_col
+        elm.style.maxWidth = "unset"
+        elm.style.width = attrs.width
+        elm.style.height = attrs.height==0? "fit-content" : attrs.height
+    }
     get spec() {
+        const connval = (nam)=>connectValue(this, nam)
         return [
             { labl: "Banner", bubble: true },
-            { labl: "Background colour", type: "col" },
-            { labl: "Border style", type: "opts", choices: this.choices },
+            { labl: "Width", type: "num", ...connval("width"),
+                bound: [1, null], step: 5 },
+            { labl: "Height", type: "num", ...connval("height"),
+                bound: [0, null], step: 5 },
+            { labl: "Style", conts: [
+                { labl: "Background colour", type: "col", ...connval("background_col") },
+                { labl: "Border style", type: "opts", ...connval("background_style"),
+                    choices: this.choices },
+            ]}
         null, ...super.spec]
     }
     static cls = "banner"
@@ -214,7 +269,8 @@ class BackgroundObj extends Node2DObj {
         const connval = (nam)=>connectValue(this, nam)
         return [
             { labl: "Background", bubble: true },
-            { labl: "Image", type: "opts", choices: Object.keys(this.choices), ...connval("img") },
+            { labl: "Image", type: "opts", ...connval("img"),
+                choices: Object.keys(this.choices) },
         null, ...super.spec]
     }
     static cls = "bg"
@@ -286,7 +342,8 @@ class Page extends Node2DObj {
         const connval = (nam)=>connectValue(this, nam)
         return [...super.spec,
             { labl: "Scale", conts: [
-                { labl: "Scale", type: "num", ...connval("scale"), step: 0.03 },
+                { labl: "Scale", type: "num", ...connval("scale"),
+                    step: 0.03 },
             ]},
         ]
     }

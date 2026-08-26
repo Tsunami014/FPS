@@ -49,15 +49,20 @@ function getRotRect(elm) {
     }
 }
 
-var focussing
-function focusOn(elm, zoomon) {
+var focussing = { elm: null, zoomon: null }
+function focusOn(elm, zoomon, instant=false) {
     focussing = { elm: elm, zoomon: zoomon }
-    updFocus()
+    updFocus(instant)
 }
 const viewp = document.getElementById("viewp")
 const mainStage = document.getElementById("main")
 const msel = document.getElementById("mainSelect")
-function updFocus() {
+function updFocus(instant=false) {
+    if (!focussing.zoomon) {
+        msel.style.display = "none"
+        return;
+    }
+
     const prevRotate = viewp.style.rotate
     const prevTranslate = viewp.style.translate
     const prevScale = viewp.style.scale
@@ -68,22 +73,27 @@ function updFocus() {
     viewp.style.scale = ""
 
     const mrect = mainStage.getBoundingClientRect()
-    const box = getRotRect(focussing.elm)
 
-    const hypCenterX = box.x + box.width / 2
-    const hypCenterY = box.y + box.height / 2
-    const rad = box.rot * Math.PI / 180
-    const relX = hypCenterX - box.qx
-    const relY = hypCenterY - box.qy
-    const trueCenterX = box.qx + relX * Math.cos(rad) - relY * Math.sin(rad)
-    const trueCenterY = box.qy + relX * Math.sin(rad) + relY * Math.cos(rad)
+    if (focussing.elm) {
+        const box = getRotRect(focussing.elm)
 
-    msel.style.display = ""
-    msel.style.left = (trueCenterX - box.width / 2 - 3 - mrect.x) + 'px'
-    msel.style.top = (trueCenterY - box.height / 2 - 3 - mrect.y) + 'px'
-    msel.style.width = (box.width + 6) + 'px'
-    msel.style.height = (box.height + 6) + 'px'
-    msel.style.rotate = `${box.rot}deg`
+        const hypCenterX = box.x + box.width / 2
+        const hypCenterY = box.y + box.height / 2
+        const rad = box.rot * Math.PI / 180
+        const relX = hypCenterX - box.qx
+        const relY = hypCenterY - box.qy
+        const trueCenterX = box.qx + relX * Math.cos(rad) - relY * Math.sin(rad)
+        const trueCenterY = box.qy + relX * Math.sin(rad) + relY * Math.cos(rad)
+
+        msel.style.display = ""
+        msel.style.left = (trueCenterX - box.width / 2 - 3 - mrect.x) + 'px'
+        msel.style.top = (trueCenterY - box.height / 2 - 3 - mrect.y) + 'px'
+        msel.style.width = (box.width + 6) + 'px'
+        msel.style.height = (box.height + 6) + 'px'
+        msel.style.rotate = `${box.rot}deg`
+    } else {
+        msel.style.display = "none"
+    }
 
     const zbox = getRotRect(focussing.zoomon)
 
@@ -104,14 +114,19 @@ function updFocus() {
 
     const targetTranslate = `${targetCenterX - landedCenterX}px ${targetCenterY - landedCenterY}px`
 
-    viewp.style.rotate = prevRotate
-    viewp.style.translate = prevTranslate
-    viewp.style.scale = prevScale
+    if (!instant) {
+        viewp.style.rotate = prevRotate
+        viewp.style.translate = prevTranslate
+        viewp.style.scale = prevScale
+        void viewp.offsetWidth // force layout
 
-    void viewp.offsetWidth // force layout
-
-    viewp.style.transition = ''
+        viewp.style.transition = ''
+    }
     viewp.style.rotate = targetRotate
     viewp.style.translate = targetTranslate
     viewp.style.scale = targetScale
+    if (instant) {
+        void viewp.offsetWidth // force layout
+        viewp.style.transition = ''
+    }
 }
