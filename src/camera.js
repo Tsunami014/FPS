@@ -1,3 +1,7 @@
+/* If you must know, this was SO INCREDIBLY PAINFUL.
+ * I used AI but it was SO TERRIBLE.
+ * It took me figuring out most of it and it doing the last small fixes for this to actually come together */
+
 function getExtremalBox(elm) {
     var minL = Infinity
     var maxR = -Infinity
@@ -54,8 +58,15 @@ const viewp = document.getElementById("viewp")
 const mainStage = document.getElementById("main")
 const msel = document.getElementById("mainSelect")
 function updFocus() {
+    const prevRotate = viewp.style.rotate
+    const prevTranslate = viewp.style.translate
+    const prevScale = viewp.style.scale
+
+    viewp.style.transition = 'none'
     viewp.style.rotate = ""
     viewp.style.translate = ""
+    viewp.style.scale = ""
+
     const mrect = mainStage.getBoundingClientRect()
     const box = getRotRect(focussing.elm)
 
@@ -76,12 +87,31 @@ function updFocus() {
 
     const zbox = getRotRect(focussing.zoomon)
 
-    viewp.style.translate = ""
-    viewp.style.rotate = -zbox.rot + 'deg'
+    const targetRotate = -zbox.rot + 'deg'
+    viewp.style.rotate = targetRotate
+
+    const availWidth = mrect.width - 6
+    const availHeight = mrect.height - 6
+    const targetScale = Math.min(availWidth / zbox.width, availHeight / zbox.height)
+    viewp.style.scale = targetScale
 
     const landed = getExtremalBox(focussing.zoomon)
 
-    const dx = (mrect.x + 3) - landed.left
-    const dy = (mrect.y + 3) - landed.top
-    viewp.style.translate = `${dx}px ${dy}px`
+    const landedCenterX = (landed.left + landed.right) / 2
+    const landedCenterY = (landed.top + landed.bottom) / 2
+    const targetCenterX = mrect.x + mrect.width / 2
+    const targetCenterY = mrect.y + mrect.height / 2
+
+    const targetTranslate = `${targetCenterX - landedCenterX}px ${targetCenterY - landedCenterY}px`
+
+    viewp.style.rotate = prevRotate
+    viewp.style.translate = prevTranslate
+    viewp.style.scale = prevScale
+
+    void viewp.offsetWidth // force layout
+
+    viewp.style.transition = ''
+    viewp.style.rotate = targetRotate
+    viewp.style.translate = targetTranslate
+    viewp.style.scale = targetScale
 }
