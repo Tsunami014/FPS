@@ -186,7 +186,9 @@ function setupClickHandler(elm, it, isObj) {
 
         deselect()
         elm.classList.add("scnsel")
-        focusOn(it.mainobj, isObj? it.mainobj.parentElement : it.mainobj)
+        requestAnimationFrame(()=>{
+            focusOn(it.mainobj, isObj? it.mainobj.parentElement : it.mainobj)
+        })
     }
     if (isObj) {
         elm.ondblclick = ()=>{
@@ -305,3 +307,5 @@ navigation.addEventListener('navigate', ()=>{
     const url = new URL(event.destination.url)
     updateTopSel(url.hash)
 })
+// Update on resize
+window.addEventListener('resize', updFocus)

@@ -318,7 +318,7 @@ class FAQObj extends Node2DObj {
 // -----
 
 
-class BasePage extends BaseObj {
+const PageMixin = (Base) => class extends Base {
     static isObj = false
     constructor(name, conts, attrs) {
         super(name, attrs)
@@ -326,20 +326,72 @@ class BasePage extends BaseObj {
         this.open = attrs?.open
     }
 
-    _makeObject() { return document.createElement("div") }
+    get dirs() {
+        return [
+            "Column", "Column reverse",
+            "Row", "Row reverse"
+        ]
+    }
+
+    get _defaults() { return { ...super._defaults,
+        page_direction: "Column",
+        page_align_horiz: "Centre",
+        page_align_vert: "Centre",
+    }}
+
+    _style(elm) {
+        super._style(elm)
+        const attrs = this.attrs
+        if (!elm) elm = this.mainobj
+        elm.style.flexDirection = attrs.page_direction.toLowerCase().replace(' ', '-')
+        elm.style.alignItems = {
+            Left: "baseline",
+            Centre: "center",
+            Right: "end",
+        }[attrs.page_align_horiz]
+        elm.style.justifyContent = {
+            Top: "baseline",
+            Centre: "center",
+            Bottom: "end",
+        }[attrs.page_align_vert]
+    }
+
+    _makeObject() {
+        const elm = document.createElement("div")
+        elm.className = "layout"
+        this._style(elm)
+        return elm
+    }
+
+    get spec() {
+        const connval = (nam)=>connectValue(this, nam)
+        return [
+            { labl: "Page", bubble: true },
+            { labl: "Direction", type: "opts", ...connval("page_direction"),
+                choices: this.dirs },
+            { labl: "Alignment", conts: [
+                { labl: "Horizontal", type: "opts", ...connval("page_align_horiz"),
+                    choices: ["Left", "Centre", "Right"] },
+                { labl: "Vertical", type: "opts", ...connval("page_align_vert"),
+                    choices: ["Top", "Centre", "Bottom"] },
+            ]},
+        null, ...super.spec]
+    }
+
     static cls = "dot"
     get sceneDef() {
         return { labl: this.name, class: this.constructor.cls,
             conts: this.conts, spec: this.spec }
     }
-}
-class Page extends Node2DObj {
-    static isObj = false
-    constructor(name, conts, attrs) {
-        super(name, attrs)
-        this.conts = conts
-        this.open = attrs?.open
+};
+
+class BasePage extends PageMixin(BaseObj) {
+    get spec() {
+        // Because BaseObj.spec is empty, so this removes the extra line caused by PageMixin
+        return super.spec.slice(0, -1)
     }
+}
+class Page extends PageMixin(Node2DObj) {
     get _defaults() { return { ...super._defaults,
         scale: 1,
     }}
@@ -350,11 +402,6 @@ class Page extends Node2DObj {
         if (!elm) elm = this.mainobj
         elm.style.scale = attrs.scale
     }
-    _makeObject() {
-        const elm = document.createElement("div")
-        this._style(elm)
-        return elm
-    }
 
     get spec() {
         const connval = (nam)=>connectValue(this, nam)
@@ -364,10 +411,5 @@ class Page extends Node2DObj {
                     step: 0.03 },
             ]},
         ]
-    }
-    static cls = "dot"
-    get sceneDef() {
-        return { labl: this.name, class: this.constructor.cls,
-            conts: this.conts, spec: this.spec }
     }
 }

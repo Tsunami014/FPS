@@ -21,7 +21,6 @@ SCREENS = {
         new BannerObj("Announcements", {
           text: "Announcement!",
           text_size: 28,
-          x: -30,
           width: 270,
           height: 65,
           text_style: ["Italics", "Small Caps"],

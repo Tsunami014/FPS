@@ -77,6 +77,9 @@ body.mobile {
     overflow-wrap: break-word;
     text-align: center;
 }
+.layout {
+    display: flex;
+}
 
 #mainSelect {
     position: absolute;
