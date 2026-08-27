@@ -242,7 +242,7 @@ const overl = document.getElementById("overl")
 function updateTopSel(hash) {
     overl.classList.add("hide")
 
-    hash = hash || "#main"
+    hash = hash || "#home"
     // Remove selected element if already exists
     const sel = document.querySelector('a.sel')
     if (sel) sel.classList.remove("sel")
