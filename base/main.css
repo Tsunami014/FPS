@@ -53,7 +53,9 @@ body.mobile {
 #side {
     padding: 5px 10px;
     background: #BBB;
-    overflow-y: scroll;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
 }
 #main, #overl {
     background: #EFF2FF;
@@ -98,6 +100,7 @@ body.mobile {
 }
 #side > section {
     min-height: 30px;
+    overflow-y: scroll;
 }
 #side.displscene > section:not(#scene),
 #side.displinsp > section:not(#inspector) {
