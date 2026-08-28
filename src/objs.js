@@ -65,8 +65,8 @@ class Node2DObj extends BaseObj {
         return [
             { labl: "Node2D", bubble: true },
             { labl: "Position", conts: [
-                { labl: "X", type: "num", ...connval("x"), step: 3 },
-                { labl: "Y", type: "num", ...connval("y"), step: 3 },
+                { labl: "X", type: "num", ...connval("x"), step: 2 },
+                { labl: "Y", type: "num", ...connval("y"), step: 2 },
             ]},
             { labl: "Rotation", conts: [
                 { labl: "Rot", type: "num", ...connval("rot"), step: 2 },
@@ -89,6 +89,7 @@ class TextObj extends Node2DObj {
         text_font: "Monospace",
         text_style: [],
         text_colour: "#222222",
+        text_align_horiz: "Centre",
         max_width: 0,
     }}
     _makeObject() {
@@ -110,6 +111,7 @@ class TextObj extends Node2DObj {
         elm.style.fontVariant = attrs.text_style.includes("Small Caps")? "small-caps":""
         elm.style.textDecoration = attrs.text_style.includes("Underline")? "underline":""
         if (cats?.text_width !== false) elm.style.maxWidth = attrs.max_width==0? "" : attrs.max_width +'px'
+        elm.style.textAlign = attrs.text_align_horiz=="Centre"? "center" : attrs.text_align_horiz.toLowerCase()
     }
     get fonts() {
         return [
@@ -144,6 +146,8 @@ class TextObj extends Node2DObj {
             ]},
             { labl: "Width", type: "num", ...connval("max_width"),
                 bound: [0, null], step: 5, show: cats?.text_width },
+            { labl: "Horizontal alignment", type: "opts", ...connval("text_align_horiz"),
+                choices: ["Left", "Centre", "Right"] },
         null, ...super.spec]
     }
     static cls = "text"
@@ -164,6 +168,7 @@ class BannerObj extends TextObj {
         height: 0,
         background_style: this.choices[0],
         background_col: "#CCCCCC",
+        text_align_vert: "Centre"
     }}
     _style(elm) {
         super._style(elm)
@@ -178,6 +183,11 @@ class BannerObj extends TextObj {
             elm.style.maxWidth = elm.style.width
         }
         elm.style.height = attrs.height==0? "fit-content" : attrs.height
+        elm.style.alignContent = {
+            Top: "baseline",
+            Centre: "center",
+            Bottom: "end",
+        }[attrs.text_align_vert]
     }
     get spec() {
         const connval = (nam)=>connectValue(this, nam)
@@ -191,7 +201,9 @@ class BannerObj extends TextObj {
                 { labl: "Background colour", type: "col", ...connval("background_col") },
                 { labl: "Border style", type: "opts", ...connval("background_style"),
                     choices: this.choices },
-            ]}
+            ]},
+            { labl: "Vertical alignment", type: "opts", ...connval("text_align_vert"),
+                choices: ["Top", "Centre", "Bottom"] },
         null, ...super.spec]
     }
     static cls = "banner"
@@ -334,6 +346,7 @@ const PageMixin = (Base) => class extends Base {
     }
 
     get _defaults() { return { ...super._defaults,
+        page_gap: 18,
         page_direction: "Column",
         page_align_horiz: "Centre",
         page_align_vert: "Centre",
@@ -343,6 +356,7 @@ const PageMixin = (Base) => class extends Base {
         super._style(elm)
         const attrs = this.attrs
         if (!elm) elm = this.mainobj
+        elm.style.gap = attrs.page_gap + 'px'
         elm.style.flexDirection = attrs.page_direction.toLowerCase().replace(' ', '-')
         elm.style.alignItems = {
             Left: "baseline",
@@ -369,6 +383,8 @@ const PageMixin = (Base) => class extends Base {
             { labl: "Page", bubble: true },
             { labl: "Direction", type: "opts", ...connval("page_direction"),
                 choices: this.dirs },
+            { labl: "Spacing", type: "num", ...connval("page_gap"),
+                step: 5 },
             { labl: "Alignment", conts: [
                 { labl: "Horizontal", type: "opts", ...connval("page_align_horiz"),
                     choices: ["Left", "Centre", "Right"] },
@@ -408,7 +424,7 @@ class Page extends PageMixin(Node2DObj) {
         return [...super.spec,
             { labl: "Scale", conts: [
                 { labl: "Scale", type: "num", ...connval("scale"),
-                    step: 0.03 },
+                    step: 0.02 },
             ]},
         ]
     }

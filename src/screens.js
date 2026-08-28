@@ -33,7 +33,8 @@ SCREENS = {
           text: "FPS",
         }),
       ], {
-        x: 12, y: 0, rot: 0,
+        rot: 2, scale: 1.2,
+        page_gap: 0,
         default: true,
       }),
       new Page("AboutPage", [
@@ -43,7 +44,7 @@ SCREENS = {
         new SectionObj("AmIEligible"),
         new SectionObj("HowToJoin"),
       ], {
-        x: 400, y: -200, rot: 14,
+        y: -10, rot: -1, scale: 0.95,
         open: true,
       }),
       new Page("HelpSection", [
@@ -53,10 +54,14 @@ SCREENS = {
         new FAQObj("FAQItem"),
         new FAQObj("FAQItem"),
       ], {
-        x: 100, y: -400, rot: -5,
+        x: -50, y: -80, rot: 8,
         open: true,
       }),
-    ], { open: true, }),
+    ], {
+      open: true,
+      page_gap: 100,
+      page_direction: "Row"
+    }),
   ]],
   "404": [null, [
     new BasePage("Stage", [

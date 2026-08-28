@@ -72,10 +72,10 @@ body.mobile {
 }
 #main * {
     max-width: fit-content;
+    margin: 0;
 }
 #main p {
     overflow-wrap: break-word;
-    text-align: center;
 }
 .layout {
     display: flex;
