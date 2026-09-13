@@ -14,6 +14,7 @@ print("Minifying website...")
 for cmd in (
     "cat src/user.js src/camera.js src/objs.js src/screens.js src/main.js | minify --type js -o build/index.js",
     "minify base/main.html -o build/index.html",
+    "minify base/login.html -o build/login.html",
     "minify base/main.css -o build/index.css",
     ):
     if os.system(cmd) != 0:

@@ -7,14 +7,14 @@ function getExtremalBox(elm) {
     var maxR = -Infinity
     var minT = Infinity
     var maxB = -Infinity
-    if (elm.tagName !== 'DIV') {
+    if (elm.tagName !== 'DIV' && !elm.hidden) {
         const r = elm.getBoundingClientRect()
         minL = r.left
         maxR = r.right
         minT = r.top
         maxB = r.bottom
     }
-    elm.querySelectorAll('*:not(div)').forEach(e => {
+    elm.querySelectorAll('*:not(div):not([hidden])').forEach(e => {
         const r = e.getBoundingClientRect()
         minL = Math.min(r.left, minL)
         maxR = Math.max(r.right, maxR)

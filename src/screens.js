@@ -51,7 +51,6 @@ if (loggedIn()) {
           btn_onpress: ()=>{
             if (confirm("Are you sure you want to log out?")) {
               logout()
-              location.href = location.pathname + location.search
             }
           }
         }),
@@ -64,6 +63,18 @@ if (loggedIn()) {
 } else {
   extra = {
     login: ["Log In", [
+      new BasePage("Stage", [
+        new TextObj("Text", {
+          text: "Log in via hackatime",
+        }),
+        new ButtonObj("LogIn", {
+          btn_label: "Log In",
+          btn_onpress: login,
+        }),
+      ], {
+        default: true,
+        open: true,
+      }),
     ]],
   }
 }

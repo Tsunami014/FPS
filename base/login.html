@@ -1,0 +1,38 @@
+<p id="mtxt">Logging in, please wait...</p>
+<script>
+function fail(t) {
+    document.getElementById("mtxt").innerText = t
+    throw new Error(t);
+}
+(async () => {
+    const url = new URL(location.href);
+    const code = url.searchParams.get("code");
+    if (code) {
+        const state = url.searchParams.get("state");
+        const mid = localStorage.getItem('umid');
+        if (!mid) {
+            fail("Unknown machine ID!")
+        }
+        if (state !== mid) {
+            fail("Incorrect state key!")
+        }
+
+        const response = await fetch("/api/token", {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: (new URLSearchParams({ code: code })).toString()
+        });
+        if (!response.ok) {
+            fail(`HTTP error! Status: ${response.status}`)
+        }
+        const token = (await response.json()).access_token;
+        localStorage.setItem('hackatime_token', token);
+        console.log('Success:', token);
+        document.getElementById("mtxt").innerText = "Success! Reloading..."
+
+        location.href = "/"
+    } else {
+        fail("No code present!")
+    }
+})()
+</script>

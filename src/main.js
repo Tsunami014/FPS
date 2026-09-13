@@ -318,6 +318,7 @@ function reloadScene() {
 // When page navigation occurs
 navigation.addEventListener('navigate', ()=>{
     const url = new URL(event.destination.url)
+    if (location.origin !== url.origin || url.pathname == "/api/login") return;
     updateTopSel(url.hash)
 })
 // Update on resize
