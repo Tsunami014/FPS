@@ -1,3 +1,7 @@
+# 9876
+# The above line is the port that will be used to deploy onto.
+# Ensure it is formatted properly!
+
 # The url of the main page (where this is hosted), or localhost if testing
 REDIRECT_URI = "http://127.0.0.1:9876/login.html"
 
