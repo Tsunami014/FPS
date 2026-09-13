@@ -3,7 +3,7 @@ function connectValue(obj, name) {
         value: obj.attrs[name],
         conn(v) {
             obj.attrs[name] = v
-            obj._style()
+            obj._style(obj.mainobj)
             updFocus()
         },
     }
@@ -23,7 +23,7 @@ class BaseObj {
 
     _style(elm) {
         if (this.attrs.default) {
-            (elm? elm : this.mainobj).id = "default"
+            elm.id = "default"
         }
     }
     _makeObject() {
@@ -63,7 +63,6 @@ class Node2DObj extends BaseObj {
     _style(elm) {
         super._style(elm)
         const attrs = this.attrs
-        if (!elm) elm = this.mainobj
         elm.style.translate = `${attrs.x}px ${attrs.y}px`
         elm.style.rotate = `${attrs.rot}deg`
     }
@@ -105,7 +104,6 @@ class TextObj extends Node2DObj {
         super._style(elm)
         const attrs = this.attrs
         const cats = this.constructor._catrs
-        if (!elm) elm = this.mainobj
         elm.innerText = attrs.text
         elm.style.fontSize = `${attrs.text_size}px`
         elm.style.fontFamily = attrs.text_font
@@ -114,7 +112,7 @@ class TextObj extends Node2DObj {
         elm.style.fontStyle = attrs.text_style.includes("Italics")? "italic":""
         elm.style.fontVariant = attrs.text_style.includes("Small Caps")? "small-caps":""
         elm.style.textDecoration = attrs.text_style.includes("Underline")? "underline":""
-        if (cats?.text_width !== false) elm.style.maxWidth = attrs.max_width==0? "" : attrs.max_width +'px'
+        if (cats?.text_width !== false) elm.style.width = attrs.max_width==0? "" : attrs.max_width +'px'
         elm.style.textAlign = attrs.text_align_horiz=="Centre"? "center" : attrs.text_align_horiz.toLowerCase()
     }
     get fonts() {
@@ -157,6 +155,30 @@ class TextObj extends Node2DObj {
     static cls = "text"
 }
 
+class LinkObj extends TextObj {
+    get _defaults() { return { ...super._defaults,
+        url: "https://this-page-intentionally-left-blank.org",
+        text_colour: "#3366CC",
+    }}
+    _makeObject() {
+        const elm = document.createElement("a")
+        this._style(elm)
+        return elm
+    }
+    _style(elm) {
+        super._style(elm)
+        elm.href = this.attrs.url
+    }
+    get spec() {
+        const connval = (nam)=>connectValue(this, nam)
+        return [
+            { labl: "Link", bubble: true },
+            { labl: "URL", type: "line", ...connval("url") },
+        null, ...super.spec]
+    }
+    static cls = "link"
+}
+
 class BannerObj extends TextObj {
     get choices() {
         return [
@@ -177,7 +199,6 @@ class BannerObj extends TextObj {
     _style(elm) {
         super._style(elm)
         const attrs = this.attrs
-        if (!elm) elm = this.mainobj
         // TODO: Background style
         elm.style.backgroundColor = attrs.background_col
         elm.style.width = attrs.width==0? "fit-content" : attrs.width
@@ -251,7 +272,6 @@ class ImageObj extends Node2DObj {
     _style(elm) {
         super._style(elm)
         const attrs = this.attrs
-        if (!elm) elm = this.mainobj
         elm.src = attrs.url
         elm.alt = attrs.alt
         elm.style.width = attrs.width==0? "fit-content" : attrs.width
@@ -314,17 +334,27 @@ class BackgroundObj extends ImageObj {
 
 
 class FAQObj extends Node2DObj {
+    get _defaults() {
+        return { ...super._defaults,
+        max_width: 0,
+        question: "What about xyz?",
+        answer: "Of course!",
+        qu_colour: "#222222",
+        ans_colour: "#222222",
+    }}
+
     get spec() {
+        const connval = (nam)=>connectValue(this, nam)
         return [
             { labl: "FAQ Item", bubble: true },
-            { labl: "Width", type: "num" },
+            { labl: "Width", type: "num", ...connval("max_width") },
             { labl: "Question", conts: [
-                { labl: "Question", type: "multiline" },
-                { labl: "Question colour", type: "col" },
+                { labl: "Question", type: "multiline", ...connval("question") },
+                { labl: "Question colour", type: "col", ...connval("qu_colour") },
             ]},
             { labl: "Answer", conts: [
-                { labl: "Answer", type: "multiline" },
-                { labl: "Answer colour", type: "col" },
+                { labl: "Answer", type: "multiline", ...connval("answer") },
+                { labl: "Answer colour", type: "col", ...connval("ans_colour") },
             ]},
         null, ...super.spec]
     }
@@ -359,7 +389,6 @@ const PageMixin = (Base) => class extends Base {
     _style(elm) {
         super._style(elm)
         const attrs = this.attrs
-        if (!elm) elm = this.mainobj
         elm.style.gap = attrs.page_gap + 'px'
         elm.style.flexDirection = attrs.page_direction.toLowerCase().replace(' ', '-')
         elm.style.alignItems = {
@@ -419,7 +448,6 @@ class Page extends PageMixin(Node2DObj) {
     _style(elm) {
         super._style(elm)
         const attrs = this.attrs
-        if (!elm) elm = this.mainobj
         elm.style.scale = attrs.scale
     }
 

@@ -103,9 +103,9 @@ SCREENS = {
   home: [null, [ // Already in the html
     new BasePage("Stage", [
       new Page("TitlePage", [
-        new BannerObj("Announcements", {
-          text: "Announcement!",
-          text_size: 28,
+        new BannerObj("Title", {
+          text: "FPS",
+          text_size: 32,
           width: 270,
           height: 65,
           text_style: ["Italics", "Small Caps"],
@@ -114,22 +114,54 @@ SCREENS = {
           url: "/imgs/square.webp",
           alt: "A cute kitten!",
         }),
-        new TextObj("Title", {
-          text: "FPS",
+        new TextObj("Help", {
+          text: "Press an object in the right menu ->",
         }),
       ], {
-        rot: 2, scale: 1.2,
+        x: -60, rot: 2, scale: 1.2,
         page_gap: 0,
         default: true,
       }),
       new Page("AboutPage", [
-        new SectionObj("WhatIsThis"),
-        new SectionObj("HowThisWorks"),
-        new SectionObj("IsHackClubReal"),
-        new SectionObj("AmIEligible"),
-        new SectionObj("HowToJoin"),
+        new SectionObj("WhatIsThis", {
+          text: "This is a Hack Club YSWS where YOU create something cool for a game and WE give you games & merch!",
+          max_width: 500,
+        }),
+        new FAQObj("IsThisReal", {
+          question: "Is this legit?",
+          answer: "This is literally what Hack Club was made for!",
+          max_width: 500,
+        }),
+        new LinkObj("HackClubWebsite", {
+          text: "Link to the Hack Club website!",
+          url: "https://hackclub.com/",
+        }),
+        new SectionObj("WhosThisFor", {
+          text: "This is for anyone aged 13-18 (inclusive)",
+          max_width: 500,
+        }),
+        new SectionObj("HowToJoin", {
+          text: "To get started, ...",
+          max_width: 500,
+        }),
+        new Page("ExtraLinks", [
+          new LinkObj("FufillmentBounty", {
+            text: "Fufillment bounty form (if I'm too slow giving prizes)",
+            url: "https://forms.hackclub.com/bounty",
+          }),
+          new LinkObj("TOS", {
+            text: "Terms of Service",
+            url: "https://hackclub.com/privacy-and-terms#hack-club-privacy-notice",
+          }),
+          new LinkObj("PrivacyPolicy", {
+            text: "Privacy Policy",
+            url: "https://hackclub.com/privacy-and-terms#hack-club-standard-terms-and-conditions",
+          }),
+        ], {
+          scale: 0.7,
+        }),
       ], {
-        y: -10, rot: -1, scale: 0.95,
+        x: -10, y: 35, rot: -2, scale: 0.9,
         open: true,
       }),
       new Page("HelpSection", [
@@ -139,7 +171,7 @@ SCREENS = {
         new FAQObj("FAQItem"),
         new FAQObj("FAQItem"),
       ], {
-        x: -50, y: -80, rot: 8,
+        y: -20, rot: -50,
         open: true,
       }),
     ], {
