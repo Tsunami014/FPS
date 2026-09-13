@@ -282,9 +282,9 @@ function updateTopSel(hash) {
     setStage(hash)
 
     setTimeout(() => {
-        overl.classList.remove("hide")
         const def = document.getElementById("default")
         focusOn(null, def, true)
+        overl.classList.remove("hide")
     }, 100)
 }
 function reloadScene() {
@@ -322,7 +322,10 @@ function reloadScene() {
     })
     side.className = ltabbtns[0][1]
     updateLTabSel()
-    mainStage.addEventListener('click', deselect)
+    mainStage.addEventListener('click', ()=>{
+        deselect()
+        focussing.elm = null
+    })
 
     // Update the main page for the current page
     updateTopSel(location.hash)

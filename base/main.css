@@ -170,21 +170,21 @@ button:not(.obj):not(.tab):active {
 }
 .tree * { color: #222; }
 
-details, .obj, .item {
+.tree details, .regular, .obj, .item {
     padding-left: 10px;
     margin-top: 5px;
     position: relative;
 }
-.tree > details, details[open] { margin-bottom: 5px; }
-details[open] { padding-bottom: 5px; }
+.tree > details { margin-bottom: 5px; }
+.tree details[open], .regular details[open] { padding-bottom: 5px; }
 
-summary, .obj, .item {
+.tree summary, .regular > summary, .obj, .item {
     padding: 3px 2px;
     border-radius: 4px;
     white-space: nowrap;
     min-width: max-content;
 }
-summary:hover, .obj:hover {
+.tree summary:hover, .obj:hover {
     background-color: #AAA;
 }
 details.regular > summary { background-color: #AAA; }
@@ -193,7 +193,7 @@ details.regular > summary:hover { background-color: #AFAFAF; }
 .scnsel:hover { background-color: #998 !important; }
 
 /* Vertical connecting line */
-details::before {
+.tree details::before, .regular::before {
     content: "";
     position: absolute;
     top: 28px;
@@ -206,8 +206,10 @@ details:not([open])::before { display: none; }
 summary {
     cursor: pointer;
     font-weight: bold;
-    margin-left: -10px;
     list-style: none; /* Removes the default triangle */
+}
+.tree summary, .regular > summary {
+    margin-left: -10px;
 }
 /* For ew Safari users */
 summary::-webkit-details-marker { display: none; }
@@ -237,6 +239,24 @@ details[open] > summary::before { content: "● "; }
 
 details.regular > summary::before { content: "› "; }
 details[open].regular > summary::before { content: "ᵛ "; }
+
+.faq > summary::before { content: "? " !important; }
+.faq > summary {
+    max-width: 100% !important;
+    padding: 5px 8px;
+    border-radius: 4px;
+}
+.faq > summary:hover {
+    filter: brightness(0.95);
+}
+.faq:not([open]) > :not(summary) { height: 0; padding: 0; }
+.faqtxt {
+    max-width: 100% !important;
+    margin: 0 4px !important;
+    padding: 5px 8px;
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
+}
 
 .obj {
     cursor: pointer;

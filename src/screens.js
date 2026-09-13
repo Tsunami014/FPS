@@ -111,6 +111,10 @@ SCREENS = {
           height: 65,
           text_style: ["Italics", "Small Caps"],
         }),
+        new BannerObj("Title", {
+          text: "STATUS: Not running... yet",
+          background_col: "#EDC"
+        }),
         new ImageObj("BannerImage", {
           url: "/imgs/square.webp",
           alt: "A cute kitten!",
@@ -129,27 +133,35 @@ SCREENS = {
           max_width: 500,
         }),
         new FAQObj("IsThisReal", {
-          question: "Is this legit?",
-          answer: "This is literally what Hack Club was made for!",
-          max_width: 500,
+          question: "Is this for real?",
+          answer: "Yup! Hack Club is a non-profit organisation and a community of 100k+ teenage makers, and we do these kinds of things all the time!",
+          width: 600,
         }),
         new LinkObj("HackClubWebsite", {
           text: "Link to the Hack Club website!",
           url: "https://hackclub.com/",
+          x: -66, rot: -2,
+        }),
+        new LinkObj("HackClubSlack", {
+          text: "Link to the Hack Club slack!\nFind this on the #fps channel!",
+          url: "https://hackclub.com/slack",
+          x: 84, rot: 2,
         }),
         new FAQObj("WhatDoYouMean", {
           question: "What do you mean, 'something cool for a game'?",
-          answer: "Whatever you like! It could be something simple like a sound effect creator, terrain generator (I won't judge if you use external libraries for the actual generation), or something more complex like a physics engine. Basically if it is used in the production of a game you'll be fine. Build it however complex or easy as you want!",
-          max_width: 500,
+          answer: `Whatever you like! It could be something simple like a sound effect creator, terrain generator, or something more complex like a physics engine.
+Basically if it is used in the production of a game you'll be fine.
+Build it however complex or easy as you want! You can build everything yourself or use libraries - it's up to you!`,
+          width: 600,
         }),
         new FAQObj("DoIHaveToBeGood", {
-          question: "Do I have to be good?",
-          answer: "Not much. Do whatever difficulty project you feel like! And if you want to try something harder or are struggling feel free to ask on the Slack channel #fps for any help, we'd love to help you!",
-          max_width: 500,
+          question: "Do I have to be good at programming?",
+          answer: "Not very, you are free to do whatever difficulty project you want to! And if you want to try something harder or are struggling, feel free to ask on the Slack channel #fps for any help (or just on Slack in general, everyone's pretty nice), we'd love to help you!",
+          width: 600,
         }),
         new Page("ExtraLinks", [
           new LinkObj("FufillmentBounty", {
-            text: "Fufillment bounty form (if I'm too slow giving prizes)",
+            text: "Fulfillment bounty form (if I'm too slow giving prizes)",
             url: "https://forms.hackclub.com/bounty",
           }),
           new LinkObj("TOS", {
@@ -178,11 +190,13 @@ SCREENS = {
         new BackgroundObj("Background", {
           width: 300,
         }),
-        new SectionObj("WhosThisFor", {
+        new SectionObj("WhoCanJoin", {
           text: "This is for anyone aged 13-18 (inclusive)",
         }),
         new SectionObj("HowToStart", {
-          text: "To get started, ...",
+          // TODO: Finish this and add a link to Slack
+          text: "To get started, join the #fps channel on the Hack Club Slack!",
+          max_width: 500,
         }),
         new Page("HowToUseThis", [
           new TextObj("Title", {
@@ -190,17 +204,18 @@ SCREENS = {
             text_style: ["Bold"],
             text_size: 22,
           }),
-          new SectionObj("BasicNavigation", {
-            text: "...",
-          }),
-          new SectionObj("EditingElements", {
-            text: "...",
+          new SectionObj("NavigationTips", {
+            text: `Click on an element in the scene list to select it, double click to inspect it (or if it's a tree branch, expand/contract it).
+Anything can be inspected by clicking on it and then going to the inspector tab.
+Click on the page to deselect the current element.
+In the inspector tab there are more options that can be revealed by clicking on them (they have a > arrow on the left)`,
+            max_width: 500,
           }),
         ], {
           open: true,
         }),
       ], {
-        y: -20, rot: -50,
+        x: 200, y: -20, rot: -50,
         open: true,
       }),
     ], {

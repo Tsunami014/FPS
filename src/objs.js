@@ -336,25 +336,61 @@ class BackgroundObj extends ImageObj {
 class FAQObj extends Node2DObj {
     get _defaults() {
         return { ...super._defaults,
-        max_width: 0,
+        width: 500,
         question: "What about xyz?",
         answer: "Of course!",
-        qu_colour: "#222222",
-        ans_colour: "#222222",
+        qu_bg_colour: "#CCCCCC",
+        ans_bg_colour: "#DDDDDD",
+        qu_align: "Left",
+        ans_align: "Centre",
     }}
+
+    _makeObject() {
+        const elm = document.createElement("details")
+        elm.className = "faq"
+        this._style(elm)
+        return elm
+    }
+    _style(elm) {
+        super._style(elm)
+        const attrs = this.attrs
+        var sum = elm.firstElementChild
+        if (!sum || sum.tagName !== "SUMMARY") {
+            sum = document.createElement("summary")
+            sum.onclick = ()=>{ requestAnimationFrame(()=>{ updFocus(); }); }
+        }
+        elm.replaceChildren(sum)
+        sum.innerText = attrs.question
+        const txt = document.createElement("p")
+        txt.innerText = attrs.answer
+        txt.className = "faqtxt"
+        elm.appendChild(txt)
+
+        sum.style.backgroundColor = attrs.qu_bg_colour
+        sum.style.textAlign = attrs.qu_align=="Centre"? "center" : attrs.qu_align.toLowerCase()
+        txt.style.backgroundColor = attrs.ans_bg_colour
+        txt.style.textAlign = attrs.ans_align=="Centre"? "center" : attrs.ans_align.toLowerCase()
+
+        elm.style.maxWidth = attrs.width
+        elm.style.minWidth = attrs.width
+    }
 
     get spec() {
         const connval = (nam)=>connectValue(this, nam)
         return [
             { labl: "FAQ Item", bubble: true },
-            { labl: "Width", type: "num", ...connval("max_width") },
+            { labl: "Width", type: "num", ...connval("width") },
             { labl: "Question", conts: [
                 { labl: "Question", type: "multiline", ...connval("question") },
-                { labl: "Question colour", type: "col", ...connval("qu_colour") },
+                { labl: "Background colour", type: "col", ...connval("qu_bg_colour") },
+                { labl: "Horiz alignment", type: "opts", ...connval("qu_align"),
+                    choices: ["Left", "Centre", "Right"] },
             ]},
             { labl: "Answer", conts: [
                 { labl: "Answer", type: "multiline", ...connval("answer") },
-                { labl: "Answer colour", type: "col", ...connval("ans_colour") },
+                { labl: "Background colour", type: "col", ...connval("ans_bg_colour") },
+                { labl: "Horiz alignment", type: "opts", ...connval("ans_align"),
+                    choices: ["Left", "Centre", "Right"] },
             ]},
         null, ...super.spec]
     }
