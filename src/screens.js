@@ -13,13 +13,15 @@ function loadUserInfo() {
             text_size: 30,
             text_style: ["Bold", "Small Caps"],
             background_col: "#DC8ADD",
-          }),
-          new TextObj("Emails", {
-            text: "Emails:\n"+data.emails.join('\n'),
+            x: -24, y: 14, rot: -2,
           }),
           new TextObj("Slack ID", {
             text: "Slack ID: "+data.slack_id,
             text_size: 8,
+            x: 120, y: 6, rot: 4,
+          }),
+          new TextObj("Emails", {
+            text: "Emails:\n"+data.emails.join('\n'),
           }),
         ], {
           open: true,

@@ -251,6 +251,15 @@ function updateLTabSel() {
 
 const stage = document.getElementById("stage")
 const overl = document.getElementById("overl")
+function setStage(hash) {
+    document.getElementById("inspector").replaceChildren()
+
+    stage.replaceChildren()
+    viewp.replaceChildren(msel)
+    var scrn = SCREENS[hash.substr(1)]
+    if (!scrn) scrn = SCREENS["404"]
+    loadTree(stage, scrn[1], viewp)
+}
 function updateTopSel(hash) {
     overl.classList.add("hide")
 
@@ -262,17 +271,11 @@ function updateTopSel(hash) {
     const newsel = document.getElementById("top").querySelector(`a[href="${hash}"]`)
     if (newsel) newsel.classList.add("sel")
 
-    document.getElementById("inspector").replaceChildren()
-
     // Instantly go to the scene
     document.getElementById("side").className = "displscene"
     updateLTabSel()
 
-    stage.replaceChildren()
-    viewp.replaceChildren(msel)
-    var scrn = SCREENS[hash.substr(1)]
-    if (!scrn) scrn = SCREENS["404"]
-    loadTree(stage, scrn[1], viewp)
+    setStage(hash)
 
     setTimeout(() => {
         overl.classList.remove("hide")
@@ -281,7 +284,10 @@ function updateTopSel(hash) {
     }, 100)
 }
 function reloadScene() {
-    updateTopSel(location.hash)
+    updateLTabSel()
+    setStage(location.hash)
+    const def = document.getElementById("default")
+    focusOn(null, def, true)
 }
 
 { // Stuff that runs instantly
