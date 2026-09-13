@@ -100,8 +100,9 @@ function updFocus(instant=false) {
     const targetRotate = -zbox.rot + 'deg'
     viewp.style.rotate = targetRotate
 
-    const availWidth = mrect.width - 6
-    const availHeight = mrect.height - 6
+    const pad = 24
+    const availWidth = mrect.width - pad*2
+    const availHeight = mrect.height - pad*2
     const targetScale = Math.min(availWidth / zbox.width, availHeight / zbox.height)
     viewp.style.scale = targetScale
 
