@@ -43,8 +43,26 @@ function loadUserInfo() {
 var extra;
 if (loggedIn()) {
   extra = {
-    projects: ["Projects", []],
-    shop: ["Shop", []],
+    projects: ["Projects", [
+      new BasePage("Stage", [
+        new TextObj("Text", {
+          text: "Coming soon..!",
+        }),
+      ], {
+        default: true,
+        open: true,
+      }),
+    ]],
+    shop: ["Shop", [
+      new BasePage("Stage", [
+        new TextObj("Text", {
+          text: "Coming soon..!",
+        }),
+      ], {
+        default: true,
+        open: true,
+      }),
+    ]],
     settings: ["Settings", [
       new BasePage("Stage", [
         loadUserInfo,
