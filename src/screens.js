@@ -217,6 +217,11 @@ In the inspector tab there are more options that can be revealed by clicking on 
         x: 200, y: -20, rot: -50,
         open: true,
       }),
+      new TextObj("MadeWith<3", {
+        text: "Made with <3 by Tsunami014",
+        y: -400, rot: 10,
+        zoom: true,
+      }),
     ], {
       open: true,
       page_gap: 100,

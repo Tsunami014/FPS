@@ -192,7 +192,7 @@ function setupClickHandler(elm, it, isObj) {
             updateLTabSel()
         } else {
             requestAnimationFrame(()=>{
-                focusOn(it.mainobj, isObj? it.mainobj.parentElement : it.mainobj)
+                focusOn(it.mainobj, isObj & !it.attrs.zoom? it.mainobj.parentElement : it.mainobj)
             })
         }
     }
