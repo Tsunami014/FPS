@@ -11,6 +11,7 @@ function connectValue(obj, name) {
 
 class BaseObj {
     static isObj = true
+    static isInvis = false
     constructor(name, attrs) {
         this.name = name
         this.attrs = { ...this._defaults, ...attrs }
@@ -45,6 +46,13 @@ class BaseObj {
         return { labl: this.name, class: this.constructor.cls, spec: this.spec }
     }
 }
+class BlankObj extends BaseObj {
+    static isInvis = true
+    _style(elm) {
+        // No super, we don't want this to be default ever
+        elm.hidden = true
+    }
+}
 class Node2DObj extends BaseObj {
     get _defaults() { return { ...super._defaults,
         x: 0,
@@ -72,10 +80,6 @@ class Node2DObj extends BaseObj {
                 { labl: "Rot", type: "num", ...connval("rot"), step: 2 },
             ]},
         ]
-    }
-    static cls = "misc"
-    get sceneDef() {
-        return { labl: this.name, class: this.constructor.cls, spec: this.spec }
     }
 }
 
@@ -444,4 +448,21 @@ class ErrorObj extends TextObj {
         text: `An error occurred ${where}!`,
     }) }
     static cls = "error"
+}
+
+class ButtonObj extends BlankObj {
+    get _defaults() { return { ...super._defaults,
+        btn_onpress: ()=>{},
+        btn_label: "?",
+    }}
+
+    get spec() {
+        const connval = (nam)=>connectValue(this, nam)
+        return [
+            { labl: "Button", bubble: true },
+            { labl: this.attrs.btn_label, type: "btn",
+                conn: this.attrs.btn_onpress },
+        ]
+    }
+    static cls = "btn"
 }

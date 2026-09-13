@@ -38,6 +38,10 @@ function connectHT() {
     }
 })()
 
+function logout() {
+    localStorage.removeItem('hackatime_token')
+}
+
 function loggedIn() {
     return localStorage.getItem('hackatime_token') !== null
 }

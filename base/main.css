@@ -225,7 +225,8 @@ details[open] > summary::before { content: "● "; }
 .obj_info::before { content: "? "; }
 .obj_dot::before { content: "○ "; }
 .obj_load::before { content: "… "; }
-.obj_load::before { content: "! "; }
+.obj_error::before { content: "! "; }
+.obj_btn::before { content: "▢ "; }
 
 details.regular > summary::before { content: "› "; }
 details[open].regular > summary::before { content: "ᵛ "; }

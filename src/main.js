@@ -186,9 +186,15 @@ function setupClickHandler(elm, it, isObj) {
 
         deselect()
         elm.classList.add("scnsel")
-        requestAnimationFrame(()=>{
-            focusOn(it.mainobj, isObj? it.mainobj.parentElement : it.mainobj)
-        })
+        if (it.constructor.isInvis) {
+            // Instantly go to the inspector
+            document.getElementById("side").className = "displinsp"
+            updateLTabSel()
+        } else {
+            requestAnimationFrame(()=>{
+                focusOn(it.mainobj, isObj? it.mainobj.parentElement : it.mainobj)
+            })
+        }
     }
     if (isObj) {
         elm.ondblclick = ()=>{

@@ -8,10 +8,11 @@ function loadUserInfo() {
         )
         const data = await response.json()
         loadUserInfo.inf = new Page("UserInfo", [
-          new TextObj("Username", {
+          new BannerObj("Username", {
             text: data.github_username,
             text_size: 30,
             text_style: ["Bold", "Small Caps"],
+            background_col: "#DC8ADD",
           }),
           new TextObj("Emails", {
             text: "Emails:\n"+data.emails.join('\n'),
@@ -38,13 +39,22 @@ function loadUserInfo() {
 }
 
 var extra;
-if (loggedIn) {
+if (loggedIn()) {
   extra = {
     projects: ["Projects", []],
     shop: ["Shop", []],
     settings: ["Settings", [
       new BasePage("Stage", [
         loadUserInfo,
+        new ButtonObj("LogOut", {
+          btn_label: "Log Out",
+          btn_onpress: ()=>{
+            if (confirm("Are you sure you want to log out?")) {
+              logout()
+              location.href = location.pathname + location.search
+            }
+          }
+        }),
       ], {
         default: true,
         open: true,
@@ -57,6 +67,7 @@ if (loggedIn) {
     ]],
   }
 }
+
 SCREENS = {
   home: [null, [ // Already in the html
     new BasePage("Stage", [
