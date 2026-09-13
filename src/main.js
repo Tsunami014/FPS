@@ -288,10 +288,12 @@ function updateTopSel(hash) {
     }, 100)
 }
 function reloadScene() {
+    overl.classList.add("hide")
     updateLTabSel()
     setStage(location.hash)
     const def = document.getElementById("default")
     focusOn(null, def, true)
+    overl.classList.remove("hide")
 }
 
 { // Stuff that runs instantly

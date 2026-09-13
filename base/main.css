@@ -63,9 +63,11 @@ body.mobile {
     background: #EFF2FF;
     overflow: hidden;
 }
+#overl { position: absolute; }
 #overl.hide {
-    width: 100%;
-    height: 100%;
+    height: 100vh;
+    min-width: 100vw;
+    z-index: 1;
 }
 #top, #side { z-index: 1; }
 
