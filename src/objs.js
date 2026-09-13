@@ -465,6 +465,38 @@ class Page extends PageMixin(Node2DObj) {
 // -----
 
 
+class ButtonObj extends Node2DObj {
+    get _defaults() { return { ...super._defaults,
+        text: "Placeholder",
+        text_size: 18,
+        btn_onpress: ()=>{},
+    }}
+    _makeObject() {
+        const elm = document.createElement("button")
+        this._style(elm)
+        return elm
+    }
+    _style(elm) {
+        super._style(elm)
+        const attrs = this.attrs
+        elm.innerText = attrs.text
+        elm.style.fontSize = `${attrs.text_size}px`
+        elm.onclick = attrs.btn_onpress
+    }
+    get spec() {
+        const connval = (nam)=>connectValue(this, nam)
+        return [
+            { labl: "Button", bubble: true },
+            { labl: "Text", type: "line", ...connval("text") },
+            { labl: "Run action", type: "btn", conn: this.attrs.btn_onpress },
+        null, ...super.spec]
+    }
+    static cls = "btn"
+}
+
+// -----
+
+
 class LoadingObj extends TextObj {
     constructor(what) { super("Loading "+what, {
         text: `Loading ${what}...`,
@@ -476,21 +508,4 @@ class ErrorObj extends TextObj {
         text: `An error occurred ${where}!`,
     }) }
     static cls = "error"
-}
-
-class ButtonObj extends BlankObj {
-    get _defaults() { return { ...super._defaults,
-        btn_onpress: ()=>{},
-        btn_label: "?",
-    }}
-
-    get spec() {
-        const connval = (nam)=>connectValue(this, nam)
-        return [
-            { labl: "Button", bubble: true },
-            { labl: this.attrs.btn_label, type: "btn",
-                conn: this.attrs.btn_onpress },
-        ]
-    }
-    static cls = "btn"
 }

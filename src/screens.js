@@ -65,16 +65,17 @@ if (loggedIn()) {
     ]],
     settings: ["Settings", [
       new BasePage("Stage", [
-        loadUserInfo,
         new ButtonObj("LogOut", {
-          btn_label: "Log Out",
+          text: "Log Out",
           btn_onpress: ()=>{
             if (confirm("Are you sure you want to log out?")) {
               logout()
             }
-          }
+          },
         }),
+        loadUserInfo,
       ], {
+        page_gap: 5,
         default: true,
         open: true,
       }),
@@ -88,7 +89,7 @@ if (loggedIn()) {
           text: "Log in via hackatime",
         }),
         new ButtonObj("LogIn", {
-          btn_label: "Log In",
+          text: "Log In",
           btn_onpress: login,
         }),
       ], {
