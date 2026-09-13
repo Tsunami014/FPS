@@ -275,6 +275,10 @@ function updateTopSel(hash) {
     document.getElementById("side").className = "displscene"
     updateLTabSel()
 
+    if (!SCREENS[hash.substr(1)]) hash = "#404"
+    var nam = SCREENS[hash.substr(1)][0] || hash.substr(1)
+    if (nam) nam = nam.charAt(0).toUpperCase() + nam.slice(1).toLowerCase()
+    document.getElementsByTagName("title")[0].innerText = `FPS ${nam}`
     setStage(hash)
 
     setTimeout(() => {
