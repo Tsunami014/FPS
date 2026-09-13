@@ -167,7 +167,6 @@ Build it however complex or easy as you want! You can build everything yourself 
           new LinkObj("TOS", {
             text: "Terms of Service",
             url: "https://hackclub.com/privacy-and-terms#hack-club-privacy-notice",
-            rot: -4,
           }),
           new LinkObj("PrivacyPolicy", {
             text: "Privacy Policy",

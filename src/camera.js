@@ -14,7 +14,7 @@ function getExtremalBox(elm) {
         minT = r.top
         maxB = r.bottom
     }
-    elm.querySelectorAll('*:not(div):not([hidden])').forEach(e => {
+    elm.querySelectorAll('*:not(div):not([hidden]):not(br)').forEach(e => {
         const r = e.getBoundingClientRect()
         minL = Math.min(r.left, minL)
         maxR = Math.max(r.right, maxR)
