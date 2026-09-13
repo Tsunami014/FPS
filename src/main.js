@@ -200,6 +200,9 @@ function setupClickHandler(elm, it, isObj) {
 }
 function loadTree(tree, data, parentStage) {
     data.forEach(it=>{
+        if (typeof it === 'function') {
+            it = it()
+        }
         if (it.constructor.isObj) {
             parentStage.appendChild(it.mainobj)
             const sd = it.sceneDef
@@ -241,6 +244,19 @@ function updateLTabSel() {
 
 const stage = document.getElementById("stage")
 const overl = document.getElementById("overl")
+function loadScene(hash) {
+    hash = hash || location.hash
+
+    // Instantly go to the scene
+    document.getElementById("side").className = "displscene"
+    updateLTabSel()
+
+    stage.replaceChildren()
+    viewp.replaceChildren(msel)
+    var scrn = SCREENS[hash.substr(1)]
+    if (!scrn) scrn = SCREENS["404"]
+    loadTree(stage, scrn[1], viewp)
+}
 function updateTopSel(hash) {
     overl.classList.add("hide")
 
@@ -254,15 +270,7 @@ function updateTopSel(hash) {
 
     document.getElementById("inspector").replaceChildren()
 
-    // Instantly go to the scene
-    document.getElementById("side").className = "displscene"
-    updateLTabSel()
-
-    stage.replaceChildren()
-    viewp.replaceChildren(msel)
-    var scrn = SCREENS[hash.substr(1)]
-    if (!scrn) scrn = SCREENS["404"]
-    loadTree(stage, scrn[1], viewp)
+    loadScene(hash)
 
     setTimeout(() => {
         overl.classList.remove("hide")

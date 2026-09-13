@@ -206,6 +206,8 @@ summary {
 /* For ew Safari users */
 summary::-webkit-details-marker { display: none; }
 
+#stage > :not(details) { margin-bottom: 5px; }
+
 /* Custom open/close icons */
 /* Icons for potential future use: ◌ ◎ */
 details > summary::before, .obj::before {
@@ -222,6 +224,7 @@ details[open] > summary::before { content: "● "; }
 .obj_bg::before { content: "◇ "; }
 .obj_info::before { content: "? "; }
 .obj_dot::before { content: "○ "; }
+.obj_load::before { content: "… "; }
 
 details.regular > summary::before { content: "› "; }
 details[open].regular > summary::before { content: "ᵛ "; }

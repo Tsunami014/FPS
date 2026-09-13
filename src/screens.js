@@ -1,12 +1,25 @@
 var extra;
 if (loggedIn) {
+  function genSetts() {
+    if (!genSetts.done) {
+      setTimeout(() => {
+        genSetts.done = true
+        loadScene()
+      }, 3000)
+      return new LoadingObj()
+    } else {
+      return new BasePage("Stage", [
+      ], {
+        open: true,
+        page_gap: 100,
+        page_direction: "Row"
+      })
+    }
+  }
   extra = {
-    projects: ["Projects", [
-    ]],
-    shop: ["Shop", [
-    ]],
-    settings: ["Settings", [
-    ]],
+    projects: ["Projects", []],
+    shop: ["Shop", []],
+    settings: ["Settings", [ genSetts ]],
   }
 } else {
   extra = {
@@ -68,8 +81,7 @@ SCREENS = {
       new Page("404Page", [
         new BannerObj("Whoops", {
           text: "Whoops!",
-          text_size: 28,
-          x: -30,
+          text_size: 32,
           width: 270,
           text_style: ["Italics"],
         }),
