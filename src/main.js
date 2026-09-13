@@ -1,5 +1,5 @@
 function checkMobile() {
-    if (window.innerWidth < 500) {
+    if (window.innerWidth < 570) {
         document.body.classList.add('mobile');
     } else {
         document.body.classList.remove('mobile');

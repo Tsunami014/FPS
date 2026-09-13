@@ -3,11 +3,13 @@
     font-size: 18px;
 }
 
-body {
-    display: grid;
+html, body {
     overflow: hidden;
     margin: 0;
     height: 100%;
+}
+body {
+    display: grid;
 }
 body:not(.mobile) {
     /* Top uses its height, bottom takes remaining */
