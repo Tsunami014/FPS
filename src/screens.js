@@ -118,8 +118,8 @@ SCREENS = {
           text: "Press an object in the right menu ->",
         }),
       ], {
-        x: -60, rot: 2, scale: 1.2,
-        page_gap: 0,
+        x: -60, rot: 6, scale: 1.2,
+        page_gap: 10,
         default: true,
       }),
       new Page("AboutPage", [
@@ -136,12 +136,14 @@ SCREENS = {
           text: "Link to the Hack Club website!",
           url: "https://hackclub.com/",
         }),
-        new SectionObj("WhosThisFor", {
-          text: "This is for anyone aged 13-18 (inclusive)",
+        new FAQObj("WhatDoYouMean", {
+          question: "What do you mean, 'something cool for a game'?",
+          answer: "Whatever you like! It could be something simple like a sound effect creator, terrain generator (I won't judge if you use external libraries for the actual generation), or something more complex like a physics engine. Basically if it is used in the production of a game you'll be fine. Build it however complex or easy as you want!",
           max_width: 500,
         }),
-        new SectionObj("HowToJoin", {
-          text: "To get started, ...",
+        new FAQObj("DoIHaveToBeGood", {
+          question: "Do I have to be good?",
+          answer: "Not much. Do whatever difficulty project you feel like! And if you want to try something harder or are struggling feel free to ask on the Slack channel #fps for any help, we'd love to help you!",
           max_width: 500,
         }),
         new Page("ExtraLinks", [
@@ -152,24 +154,50 @@ SCREENS = {
           new LinkObj("TOS", {
             text: "Terms of Service",
             url: "https://hackclub.com/privacy-and-terms#hack-club-privacy-notice",
+            rot: -4,
           }),
           new LinkObj("PrivacyPolicy", {
             text: "Privacy Policy",
             url: "https://hackclub.com/privacy-and-terms#hack-club-standard-terms-and-conditions",
+            rot: -4,
           }),
         ], {
-          scale: 0.7,
+          y: 16, rot: 2, scale: 0.7,
         }),
       ], {
-        x: -10, y: 35, rot: -2, scale: 0.9,
+        x: -10, y: 35, rot: -3, scale: 0.9,
         open: true,
       }),
-      new Page("HelpSection", [
+      new Page("GetStartedSection", [
+        new TextObj("Title", {
+          text: "Get Started",
+          text_style: ["Bold"],
+          text_size: 34,
+        }),
         new BackgroundObj("Background", {
           width: 300,
         }),
-        new FAQObj("FAQItem"),
-        new FAQObj("FAQItem"),
+        new SectionObj("WhosThisFor", {
+          text: "This is for anyone aged 13-18 (inclusive)",
+        }),
+        new SectionObj("HowToStart", {
+          text: "To get started, ...",
+        }),
+        new Page("HowToUseThis", [
+          new TextObj("Title", {
+            text: "How to navigate this",
+            text_style: ["Bold"],
+            text_size: 22,
+          }),
+          new SectionObj("BasicNavigation", {
+            text: "...",
+          }),
+          new SectionObj("EditingElements", {
+            text: "...",
+          }),
+        ], {
+          open: true,
+        }),
       ], {
         y: -20, rot: -50,
         open: true,

@@ -183,7 +183,8 @@ summary, .obj, .item {
 summary:hover, .obj:hover {
     background-color: #AAA;
 }
-details.regular > summary:hover { background-color: #999; }
+details.regular > summary { background-color: #AAA; }
+details.regular > summary:hover { background-color: #AFAFAF; }
 .scnsel { background-color: #AA9 !important; }
 .scnsel:hover { background-color: #998 !important; }
 
