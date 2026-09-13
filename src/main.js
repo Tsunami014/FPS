@@ -219,6 +219,7 @@ function loadTree(tree, data, parentStage) {
             labl.innerText = it.name
             newtree.appendChild(labl)
             parentStage.appendChild(it.mainobj)
+            it.mainobj.replaceChildren()
             setupClickHandler(labl, it, false)
             loadTree(newtree, it.conts, it.mainobj)
             tree.appendChild(newtree)
@@ -244,19 +245,6 @@ function updateLTabSel() {
 
 const stage = document.getElementById("stage")
 const overl = document.getElementById("overl")
-function loadScene(hash) {
-    hash = hash || location.hash
-
-    // Instantly go to the scene
-    document.getElementById("side").className = "displscene"
-    updateLTabSel()
-
-    stage.replaceChildren()
-    viewp.replaceChildren(msel)
-    var scrn = SCREENS[hash.substr(1)]
-    if (!scrn) scrn = SCREENS["404"]
-    loadTree(stage, scrn[1], viewp)
-}
 function updateTopSel(hash) {
     overl.classList.add("hide")
 
@@ -270,13 +258,24 @@ function updateTopSel(hash) {
 
     document.getElementById("inspector").replaceChildren()
 
-    loadScene(hash)
+    // Instantly go to the scene
+    document.getElementById("side").className = "displscene"
+    updateLTabSel()
+
+    stage.replaceChildren()
+    viewp.replaceChildren(msel)
+    var scrn = SCREENS[hash.substr(1)]
+    if (!scrn) scrn = SCREENS["404"]
+    loadTree(stage, scrn[1], viewp)
 
     setTimeout(() => {
         overl.classList.remove("hide")
         const def = document.getElementById("default")
         focusOn(null, def, true)
     }, 100)
+}
+function reloadScene() {
+    updateTopSel(location.hash)
 }
 
 { // Stuff that runs instantly

@@ -1,25 +1,55 @@
+function loadUserInfo() {
+  if (!loadUserInfo.inf) {
+    (async () => {
+      try {
+        const response = await fetch(
+          "https://hackatime.hackclub.com/api/v1/authenticated/me",
+          { headers: { Authorization: `Bearer ${getTok()}` } }
+        )
+        const data = await response.json()
+        loadUserInfo.inf = new Page("UserInfo", [
+          new TextObj("Username", {
+            text: data.github_username,
+            text_size: 30,
+            text_style: ["Bold", "Small Caps"],
+          }),
+          new TextObj("Emails", {
+            text: "Emails:\n"+data.emails.join('\n'),
+          }),
+          new TextObj("Slack ID", {
+            text: "Slack ID: "+data.slack_id,
+            text_size: 8,
+          }),
+        ], {
+          open: true,
+          page_gap: 10,
+          page_direction: "Column"
+        })
+      } catch (error) {
+        console.error('Failed to fetch user info:', error)
+        loadUserInfo.inf = new ErrorObj("loading user info")
+      }
+      reloadScene()
+    })()
+    return new LoadingObj("user info")
+  } else {
+    return loadUserInfo.inf
+  }
+}
+
 var extra;
 if (loggedIn) {
-  function genSetts() {
-    if (!genSetts.done) {
-      setTimeout(() => {
-        genSetts.done = true
-        loadScene()
-      }, 3000)
-      return new LoadingObj()
-    } else {
-      return new BasePage("Stage", [
-      ], {
-        open: true,
-        page_gap: 100,
-        page_direction: "Row"
-      })
-    }
-  }
   extra = {
     projects: ["Projects", []],
     shop: ["Shop", []],
-    settings: ["Settings", [ genSetts ]],
+    settings: ["Settings", [
+      new BasePage("Stage", [
+        loadUserInfo,
+      ], {
+        default: true,
+        open: true,
+      }),
+    ]],
   }
 } else {
   extra = {

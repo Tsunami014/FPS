@@ -41,3 +41,7 @@ function connectHT() {
 function loggedIn() {
     return localStorage.getItem('hackatime_token') !== null
 }
+
+function getTok() {
+    return localStorage.getItem('hackatime_token')
+}

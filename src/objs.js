@@ -153,14 +153,6 @@ class TextObj extends Node2DObj {
     static cls = "text"
 }
 
-class LoadingObj extends TextObj {
-    constructor() { super("Loading", {
-        text: "Loading...",
-        default: true,
-    }) }
-    static cls = "load"
-}
-
 class BannerObj extends TextObj {
     get choices() {
         return [
@@ -436,4 +428,20 @@ class Page extends PageMixin(Node2DObj) {
             ]},
         ]
     }
+}
+
+// -----
+
+
+class LoadingObj extends TextObj {
+    constructor(what) { super("Loading "+what, {
+        text: `Loading ${what}...`,
+    }) }
+    static cls = "load"
+}
+class ErrorObj extends TextObj {
+    constructor(where) { super("Error "+where, {
+        text: `An error occurred ${where}!`,
+    }) }
+    static cls = "error"
 }
