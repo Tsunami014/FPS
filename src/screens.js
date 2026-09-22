@@ -55,9 +55,27 @@ if (loggedIn()) {
     ]],
     shop: ["Shop", [
       new BasePage("Stage", [
-        new BalanceObj({
-          rot: -10,
-          zoom: true,
+        new Page("DashboardPage", [
+          new BalanceObj({
+            zoom: true,
+          }),
+          new Page("OrdersPage", [
+            new TextObj("Text", {
+              text: "Your orders",
+              text_size: 22,
+              text_style: ["Bold"],
+            }),
+            new TextObj("Text", {
+              text: "Nothing here yet!",
+            }),
+          ], {
+            open: true,
+          }),
+        ], {
+          page_gap: 40,
+          default: true,
+          open: true,
+          rot: 10,
         }),
         new Page("ShopItemsPage", [
           new ShopObj("Test", {
@@ -71,18 +89,11 @@ if (loggedIn()) {
         ], {
           open: true,
           page_gap: 25,
-        }),
-        new Page("OrdersPage", [
-          new TextObj("Text", {
-            text: "Coming soon..!",
-          }),
-        ], {
-          open: true,
+          rot: -1,
         }),
       ], {
-        default: true,
         open: true,
-        page_gap: 100,
+        page_gap: 180,
         page_direction: "Row",
       }),
     ]],

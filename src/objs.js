@@ -621,6 +621,7 @@ class ErrorObj extends TextObj {
 class BalanceObj extends TextObj {
     constructor(xtra) { super("Balance", {
         text: `You have xx currency`,
+        text_style: ["Small Caps"],
         ...xtra
     }) }
     static cls = "balnc"
