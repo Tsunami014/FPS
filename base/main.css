@@ -192,6 +192,12 @@ details.regular > summary:hover { background-color: #AFAFAF; }
 .scnsel { background-color: #AA9 !important; }
 .scnsel:hover { background-color: #998 !important; }
 
+summary, .obj {
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
 /* Vertical connecting line */
 .tree details::before, .regular::before {
     content: "";

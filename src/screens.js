@@ -107,13 +107,14 @@ SCREENS = {
         new BannerObj("Title", {
           text: "FPS",
           text_size: 32,
-          width: 270,
-          height: 65,
+          width: 80,
           text_style: ["Italics", "Small Caps"],
         }),
-        new BannerObj("Title", {
+        new BannerObj("Banner", {
           text: "STATUS: Not running... yet",
-          background_col: "#EDC"
+          background_col: "#EDC",
+          width: 350,
+          height: 70,
         }),
         new ImageObj("BannerImage", {
           url: "/imgs/square.webp",
@@ -163,15 +164,17 @@ Build it however complex or easy as you want! You can build everything yourself 
           new LinkObj("FufillmentBounty", {
             text: "Fulfillment bounty form (if I'm too slow giving prizes)",
             url: "https://forms.hackclub.com/bounty",
+            y: -6, rot: -1,
           }),
           new LinkObj("TOS", {
             text: "Terms of Service",
             url: "https://hackclub.com/privacy-and-terms#hack-club-privacy-notice",
+            x: -18, rot: -4,
           }),
           new LinkObj("PrivacyPolicy", {
             text: "Privacy Policy",
             url: "https://hackclub.com/privacy-and-terms#hack-club-standard-terms-and-conditions",
-            rot: -4,
+            x: 32, rot: 2,
           }),
         ], {
           y: 16, rot: 2, scale: 0.7,

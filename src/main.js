@@ -115,7 +115,7 @@ function inspectElm(parent, data) {
                         if (it.value) inp.value = it.value
                         if (conn) {
                             inp.oninput = (e)=>{
-                                var val = e.target.valueAsNumber
+                                var val = e.target.valueAsNumber || 0
                                 if (it.bound) {
                                     val = clamp(val, it.bound[0], it.bound[1])
                                 }

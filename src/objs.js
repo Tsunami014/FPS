@@ -207,6 +207,7 @@ class BannerObj extends TextObj {
         } else {
             elm.style.maxWidth = elm.style.width
         }
+        elm.style.minWidth = elm.style.maxWidth
         elm.style.height = attrs.height==0? "fit-content" : attrs.height
         elm.style.alignContent = {
             Top: "baseline",
