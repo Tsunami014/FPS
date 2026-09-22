@@ -2,8 +2,8 @@
 A Hack club YSWS (You Ship We Ship) I plan on doing at some point
 
 ## Structure
-- All files in `base/` and `src/` are the unbuilt webpage
-- It gets built to `index.html`, `index.css` and `index.js`
+- All files in `base/`, `src/` and `assets/` are the unbuilt webpage
+- It gets built to `build/`
 
 ## Testing & deploying
 1. Ensure `minify` and `python` are installed

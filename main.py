@@ -6,23 +6,36 @@ from pathlib import Path
 from PIL import Image
 import os
 import requests
+import secrets
 import config
 import sqliteLimiter # Only needs to be imported to use sqlite storage in the Limiter!
 sqliteLimiter.register() # No-op to stop the linter from complaining
 
+for fold in (
+    "build", "build/static", "build/static/imgs"
+):
+    if not os.path.exists(fold):
+        os.mkdir(fold)
+
 print("Minifying website...")
+def mkCat(*fs):
+    return "cat " + ' '.join("src/"+f for f in fs)
+
 for cmd in (
-    "cat src/user.js src/camera.js src/objs.js src/screens.js src/main.js | minify --type js -o build/index.js",
+    mkCat("user.js", "camera.js", "objs.js", "screens.js", "main.js") + " | minify --type js -o build/static/main.js",
+    "{ echo 'export function setup(Objs, PAGE) {'; " +
+        mkCat("_adminScrns.js") +
+    "; echo '}'; } | minify --type js -o build/admin.js",
     "minify base/main.html -o build/index.html",
-    "minify base/login.html -o build/login.html",
-    "minify base/main.css -o build/index.css",
+    "minify base/login.html -o build/static/login.html",
+    "minify base/main.css -o build/static/index.css",
     ):
     if os.system(cmd) != 0:
         raise RuntimeError("Command failed!")
 
 print("Minifying images...")
 SOURCE = Path("assets")
-DEST = Path("build/imgs")
+DEST = Path("build/static/imgs")
 for src in SOURCE.rglob("*"):
     if not src.is_file():
         continue
@@ -36,15 +49,35 @@ for src in SOURCE.rglob("*"):
                 img = img.convert("RGBA")
             else:
                 img = img.convert("RGB")
-
-        dest.parent.mkdir(parents=True, exist_ok=True)
         img.save(dest, "WEBP", quality=80, method=6)
 
 print("Finished building!")
 
-app = Flask(__name__, static_folder="build", static_url_path="")
+SECRET = secrets.token_urlsafe(32)
+print("\nPaste this into the console for admin access:\n"+
+      f"localStorage.setItem('adminKey', `{SECRET}`)\nwindow.location.reload()\n"
+)
+
+def checkSecret():
+    auth = request.headers.get("Authorization", "")
+    if (not auth.startswith("Bearer ")) or \
+       (not secrets.compare_digest(auth[7:], SECRET)):
+            return "Unauthorized", 401
+    return None
+
+app = Flask(__name__, static_folder="build/static", static_url_path="")
 limiter = Limiter(get_remote_address, app=app,
     storage_uri="sqlite:///limiter.db", default_limits=["200 per minute"])
+
+
+with open("build/admin.js") as f:
+    ADMINJS = f.read()
+@app.route('/admin.js', methods=['GET'])
+def admnJs():
+    if (err := checkSecret()) is not None:
+        return err
+    return ADMINJS
+
 
 # We reimplement this here to avoid cors issues
 @app.route('/api/token', methods=['POST'])

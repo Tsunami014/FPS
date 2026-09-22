@@ -9,7 +9,9 @@ function connectValue(obj, name) {
     }
 }
 
-class BaseObj {
+const Objs = {}
+
+Objs.Base = class {
     static isObj = true
     static isInvis = false
     constructor(name, attrs) {
@@ -46,14 +48,14 @@ class BaseObj {
         return { labl: this.name, class: this.constructor.cls, spec: this.spec }
     }
 }
-class BlankObj extends BaseObj {
+Objs.Blank = class extends Objs.Base {
     static isInvis = true
     _style(elm) {
         // No super, we don't want this to be default ever
         elm.hidden = true
     }
 }
-class Node2DObj extends BaseObj {
+Objs.Node2D = class extends Objs.Base {
     get _defaults() { return { ...super._defaults,
         x: 0,
         y: 0,
@@ -85,7 +87,7 @@ class Node2DObj extends BaseObj {
 // -----
 
 
-class TextObj extends Node2DObj {
+Objs.Text = class extends Objs.Node2D {
     get _defaults() { return { ...super._defaults,
         text: "Placeholder",
         text_size: 18,
@@ -155,7 +157,7 @@ class TextObj extends Node2DObj {
     static cls = "text"
 }
 
-class LinkObj extends TextObj {
+Objs.Link = class extends Objs.Text {
     get _defaults() { return { ...super._defaults,
         url: "https://this-page-intentionally-left-blank.org",
         text_colour: "#3366CC",
@@ -179,7 +181,7 @@ class LinkObj extends TextObj {
     static cls = "link"
 }
 
-class BannerObj extends TextObj {
+Objs.Banner = class extends Objs.Text {
     get choices() {
         return [
             "style1",
@@ -235,7 +237,7 @@ class BannerObj extends TextObj {
     static cls = "banner"
 }
 
-class SectionObj extends TextObj {
+Objs.Section = class extends Objs.Text {
     get spec() {
         return [
             { labl: "Section", bubble: true },
@@ -251,7 +253,7 @@ class SectionObj extends TextObj {
 // -----
 
 
-class ImageObj extends Node2DObj {
+Objs.Image = class extends Objs.Node2D {
     get _defaults() { return { ...super._defaults,
         url: "/imgs/square.webp",
         alt: "An image you forgot to add alt text for",
@@ -299,7 +301,7 @@ class ImageObj extends Node2DObj {
     static cls = "img"
 }
 
-class BackgroundObj extends ImageObj {
+Objs.Background = class extends Objs.Image {
     get _defaults() {
         return { ...super._defaults,
         img: Object.keys(this.choices)[0],
@@ -334,7 +336,7 @@ class BackgroundObj extends ImageObj {
 // -----
 
 
-class FAQObj extends Node2DObj {
+Objs.FAQ = class extends Objs.Node2D {
     get _defaults() {
         return { ...super._defaults,
         width: 500,
@@ -401,7 +403,7 @@ class FAQObj extends Node2DObj {
 // -----
 
 
-const PageMixin = (Base) => class extends Base {
+Objs.PageMixin = (Base) => class extends Base {
     static isObj = false
     constructor(name, conts, attrs) {
         super(name, attrs)
@@ -471,13 +473,13 @@ const PageMixin = (Base) => class extends Base {
     }
 };
 
-class BasePage extends PageMixin(BaseObj) {
+Objs.BasePage = class extends Objs.PageMixin(Objs.Base) {
     get spec() {
         // Because BaseObj.spec is empty, so this removes the extra line caused by PageMixin
         return super.spec.slice(0, -1)
     }
 }
-class Page extends PageMixin(Node2DObj) {
+Objs.Page = class extends Objs.PageMixin(Objs.Node2D) {
     get _defaults() { return { ...super._defaults,
         scale: 1,
     }}
@@ -502,7 +504,7 @@ class Page extends PageMixin(Node2DObj) {
 // -----
 
 
-class ButtonObj extends Node2DObj {
+Objs.Button = class extends Objs.Node2D {
     get _defaults() { return { ...super._defaults,
         text: "Placeholder",
         text_size: 18,
@@ -531,7 +533,7 @@ class ButtonObj extends Node2DObj {
     static cls = "btn"
 }
 
-class ShopObj extends Node2DObj {
+Objs.Shop = class extends Objs.Node2D {
     get _defaults() { return { ...super._defaults,
         title: "Title",
         desc: "Description",
@@ -605,20 +607,20 @@ class ShopObj extends Node2DObj {
 // -----
 
 
-class LoadingObj extends TextObj {
+Objs.Loading = class extends Objs.Text {
     constructor(what) { super("Loading "+what, {
         text: `Loading ${what}...`,
     }) }
     static cls = "load"
 }
-class ErrorObj extends TextObj {
+Objs.Error = class extends Objs.Text {
     constructor(where) { super("Error "+where, {
         text: `An error occurred ${where}!`,
     }) }
     static cls = "error"
 }
 
-class BalanceObj extends TextObj {
+Objs.Balance = class extends Objs.Text {
     constructor(xtra) { super("Balance", {
         text: `You have xx currency`,
         text_style: ["Small Caps"],
