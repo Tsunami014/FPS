@@ -35,7 +35,7 @@ function loadUserInfo() {
     (async () => {
       try {
         const response = await fetch(
-          "https://hackatime.hackclub.com/api/v1/authenticated/me",
+          "/api/me",
           { headers: { Authorization: `Bearer ${getTok()}` } }
         )
         const data = await response.json()
@@ -47,10 +47,10 @@ function loadUserInfo() {
             background_col: "#DC8ADD",
             x: -24, y: 10, rot: -2,
           }),
-          new Objs.Text("Slack ID", {
-            text: "Slack ID: "+data.slack_id,
+          new Objs.Text("IDs", {
+            text: `Slack ID: ${data.slack_id}\nHackatime ID: ${data.hackatime_id}`,
             text_size: 8,
-            x: 120, y: 6, rot: 4,
+            x: 120, y: 10, rot: 4,
           }),
           new Objs.Text("Emails", {
             text: "Emails:\n"+data.emails.join('\n'),
@@ -140,7 +140,7 @@ if (loggedIn()) {
         }),
         loadUserInfo,
       ], {
-        page_gap: 10,
+        page_gap: 15,
         default: true,
         open: true,
       }),
@@ -186,7 +186,7 @@ SCREENS = {
           alt: "A cute kitten!",
         }),
         new Objs.Text("Help", {
-          text: "Press an object in the right menu ->",
+          text: "Press an object in the menu!",
         }),
       ], {
         x: -60, rot: 6, scale: 1.2,
