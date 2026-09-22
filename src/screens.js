@@ -13,10 +13,15 @@ if (localStorage.getItem('adminKey') !== null) {
               { headers: { Authorization: `Bearer ${adminKey}` } }
             )
             const source = await response.text()
-            const page = await import(
-              `data:text/javascript;charset=utf-8,${encodeURIComponent(source)}`
-            )
-            func.inf = page.setup(Objs, inf[0])
+            if (source == "Unauthorized") {
+              console.error("Unauthorized")
+              func.inf = new Objs.Error("authenticating", { text: "You are unauthorized!" })
+            } else {
+              const page = await import(
+                `data:text/javascript;charset=utf-8,${encodeURIComponent(source)}`
+              )
+              func.inf = page.setup(Objs, inf[0])
+            }
           } catch (error) {
             console.error(`Failed to load ${inf[0]} page:`, error)
             func.inf = new Objs.Error(`loading ${inf[0]} page`)

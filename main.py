@@ -57,16 +57,22 @@ for src in SOURCE.rglob("*"):
 print("Finished building!")
 
 SECRET = secrets.token_urlsafe(32)
-print("\nPaste this into the console for admin access:\n"+
-      f"localStorage.setItem('adminKey', `{SECRET}`)\nwindow.location.reload()\n"
+print("\nPaste this into the console for admin access:\n" +
+      f"localStorage.setItem('adminKey', `{SECRET}`)\nwindow.location.reload()\n" +
+      "\nTo remove admin access run:\n" +
+      "localStorage.removeItem('adminKey')\nwindow.location.reload()\n\n"
 )
 
-def checkSecret():
-    auth = request.headers.get("Authorization", "")
-    if (not auth.startswith("Bearer ")) or \
-       (not secrets.compare_digest(auth[7:], SECRET)):
+def admin_required(fn):
+    @wraps(fn)
+    def wrapper(*args, **kwargs):
+        auth = request.headers.get("Authorization", "")
+        if not auth.startswith("Bearer "):
             return "Unauthorized", 401
-    return None
+        if not secrets.compare_digest(auth[7:], SECRET):
+            return "Unauthorized", 401
+        return fn(*args, **kwargs)
+    return wrapper
 
 app = Flask(__name__, static_folder="build/static", static_url_path="")
 limiter = Limiter(get_remote_address, app=app,
@@ -76,9 +82,8 @@ limiter = Limiter(get_remote_address, app=app,
 with open("build/admin.js") as f:
     ADMINJS = f.read()
 @app.route('/admin.js', methods=['GET'])
+@admin_required
 def admnJs():
-    if (err := checkSecret()) is not None:
-        return err
     return admin.format(ADMINJS)
 
 

@@ -614,8 +614,9 @@ Objs.Loading = class extends Objs.Text {
     static cls = "load"
 }
 Objs.Error = class extends Objs.Text {
-    constructor(where) { super("Error "+where, {
+    constructor(where, xtra) { super("Error "+where, {
         text: `An error occurred ${where}!`,
+        ...xtra
     }) }
     static cls = "error"
 }
