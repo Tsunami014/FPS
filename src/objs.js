@@ -531,6 +531,77 @@ class ButtonObj extends Node2DObj {
     static cls = "btn"
 }
 
+class ShopObj extends Node2DObj {
+    get _defaults() { return { ...super._defaults,
+        title: "Title",
+        desc: "Description",
+        image_url: "/imgs/square.webp",
+        hours: 10,
+    }}
+    _makeObject() {
+        const elm = document.createElement("article")
+        elm.className = "shopit"
+
+        const img = document.createElement("img")
+        function afterconn() {
+            setTimeout(updFocus, 100)
+        }
+        if (img.complete) {
+            afterconn()
+        }
+        img.addEventListener('load', afterconn)
+        elm.appendChild(img)
+
+        elm.appendChild(document.createElement("h2"))
+        elm.appendChild(document.createElement("p"))
+        elm.appendChild(document.createElement("p"))
+
+        const btn = document.createElement("button")
+        btn.innerText = "Get!"
+        elm.appendChild(btn)
+
+        this._style(elm)
+        return elm
+    }
+    _style(elm) {
+        super._style(elm)
+        const attrs = this.attrs
+
+        const img = elm.children[0]
+        if (img?.tagName === "IMG") {
+            img.src = attrs.image_url
+            img.alt = `A picture of "${attrs.title}"`
+        }
+        const headr = elm.children[1]
+        if (headr?.tagName === "H2") {
+            headr.innerText = attrs.title
+        }
+        const desc = elm.children[2]
+        if (desc?.tagName === "P") {
+            desc.innerText = attrs.desc
+        }
+        const info = elm.children[3]
+        if (info?.tagName === "P") {
+            info.innerText = `Needs ~${attrs.hours} hours`
+        }
+    }
+    get spec() {
+        const connval = (nam)=>connectValue(this, nam)
+        return [
+            { labl: "Shop Item", bubble: true },
+            { labl: "Info", conts: [
+                { labl: "Title", type: "line", ...connval("title") },
+                { labl: "Description", type: "line", ...connval("desc") },
+                { labl: "Image URL", type: "line", ...connval("image_url") },
+                { labl: "Hours required", type: "num", ...connval("hours"),
+                    bound: [1, null] },
+            ]},
+            { labl: "Get!", type: "btn" },
+        null, ...super.spec]
+    }
+    static cls = "shopit"
+}
+
 // -----
 
 
@@ -545,4 +616,12 @@ class ErrorObj extends TextObj {
         text: `An error occurred ${where}!`,
     }) }
     static cls = "error"
+}
+
+class BalanceObj extends TextObj {
+    constructor(xtra) { super("Balance", {
+        text: `You have xx currency`,
+        ...xtra
+    }) }
+    static cls = "balnc"
 }

@@ -13,7 +13,7 @@ function loadUserInfo() {
             text_size: 30,
             text_style: ["Bold", "Small Caps"],
             background_col: "#DC8ADD",
-            x: -24, y: 14, rot: -2,
+            x: -24, y: 10, rot: -2,
           }),
           new TextObj("Slack ID", {
             text: "Slack ID: "+data.slack_id,
@@ -55,12 +55,35 @@ if (loggedIn()) {
     ]],
     shop: ["Shop", [
       new BasePage("Stage", [
-        new TextObj("Text", {
-          text: "Coming soon..!",
+        new BalanceObj({
+          rot: -10,
+          zoom: true,
+        }),
+        new Page("ShopItemsPage", [
+          new ShopObj("Test", {
+            title: "Testing shop item!",
+            desc: "This is a description of this test shop item",
+            image_url: "/imgs/square.webp",
+            hours: 15,
+          }),
+          new ShopObj("Test2", {
+          }),
+        ], {
+          open: true,
+          page_gap: 25,
+        }),
+        new Page("OrdersPage", [
+          new TextObj("Text", {
+            text: "Coming soon..!",
+          }),
+        ], {
+          open: true,
         }),
       ], {
         default: true,
         open: true,
+        page_gap: 100,
+        page_direction: "Row",
       }),
     ]],
     settings: ["Settings", [
@@ -75,7 +98,7 @@ if (loggedIn()) {
         }),
         loadUserInfo,
       ], {
-        page_gap: 5,
+        page_gap: 10,
         default: true,
         open: true,
       }),
