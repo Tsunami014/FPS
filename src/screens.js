@@ -46,13 +46,43 @@ function loadProjs() {
         )
 
         const projs = (await response.json()).projects
+        const hasprojs = projs && projs.length > 0
         var projlist;
-        if (projs && projs.length > 0) {
+        if (hasprojs) {
           projlist = projs.map(p=>{
-            console.log(p)
-            return new Objs.Text("Project", {
-              text: "Placeholder for project; "+p.title,
-            })
+            return new Objs.Page(p.title, [
+              new Objs.Page("DetailsPage", [
+                new Objs.Text("Title", {
+                  text: p.title,
+                }),
+                new Objs.Link("GitURL", {
+                  url: p.git_url,
+                }),
+                // TODO: Hackatime project select
+              ]),
+              new Objs.Button("DeleteProject", {
+                text: `Delete Project '${p.title}'`,
+                btn_onpress: async ()=>{
+                  try {
+                    const response2 = await fetch("/api/projects?id="+p.id, {
+                      method: 'DELETE',
+                      headers: { Authorization: `Bearer ${getTok()}` }
+                    })
+                    if (response2.status === 204) {
+                      loadProjs.inf = null // Re-fetch projects
+                    } else {
+                      console.error(`HTTP error when deleting project ${p.id}: ${response2.status}`)
+                      loadProjs.inf = new Objs.Error("deleting the project")
+                    }
+                    reloadScene()
+                  } catch (error) {
+                    console.error(`Failed to delete project ${p.id}:`, error)
+                    loadProjs.inf = new Objs.Error("deleting the project")
+                    reloadScene()
+                  }
+                },
+              })
+            ])
           })
         } else {
           projlist = [new Objs.Text("NothingYet", {
@@ -62,7 +92,7 @@ function loadProjs() {
 
         loadProjs.inf = new Objs.BasePage("Stage", [
           new Objs.Page("Projects", projlist, {
-            default: true,
+            default: hasprojs,
             open: true,
           }),
           new Objs.Button("NewProject", {
@@ -88,6 +118,7 @@ function loadProjs() {
             },
           })
         ], {
+          default: !hasprojs,
           open: true,
         })
       } catch (error) {

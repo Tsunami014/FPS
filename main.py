@@ -135,12 +135,18 @@ def me(user):
         "balance": user["balance"],
     })
 
-@app.route('/api/projects', methods=['GET', 'PUT'])
+@app.route('/api/projects', methods=['GET', 'PUT', 'DELETE'])
 @login_required
 def projects(user):
     if request.method == 'PUT':
         admin.newProject(user['id'])
         return "Done! :)", 201
+
+    if request.method == 'DELETE':
+        id = request.args.get('id', default=-1, type=int)
+        if admin.tryDeleteProject(user['id'], id):
+            return "Done! :)", 204
+        return "", 404
 
     projs = admin.getUserProjects(user['id'])
     return jsonify({

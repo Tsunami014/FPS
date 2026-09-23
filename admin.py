@@ -14,6 +14,7 @@ def get_conn():
     if conn is None:
         conn = sqlite3.connect(DB_PATH, timeout=5.0)
         conn.execute("PRAGMA journal_mode=WAL;")
+        conn.execute("PRAGMA foreign_keys = ON;")
         conn.row_factory = sqlite3.Row
         _local.conn = conn
     return conn
@@ -47,14 +48,15 @@ with sqlite3.connect(DB_PATH, timeout=5.0) as _setup:
         description TEXT,
         demo_url TEXT,
         status TEXT,
-        fulfilled INTEGER
+        fulfilled INTEGER,
+        FOREIGN KEY (proj_id) REFERENCES projects(id) ON DELETE CASCADE
     );
     CREATE TABLE IF NOT EXISTS devlogs (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         ship_id INTEGER NOT NULL,
         description TEXT,
         image_url TEXT,
-        status TEXT
+        FOREIGN KEY (ship_id) REFERENCES ships(id) ON DELETE CASCADE
     );
 ''')
 
@@ -128,26 +130,56 @@ def getUserProjects(userid):
     if userid is None:
         return None
     conn = get_conn()
-    projs = []
-    for proj in conn.execute(
-        "SELECT * FROM projects WHERE user_id = ?", (userid,)
+    projs = {}
+    for row in conn.execute(
+        """SELECT
+            p.id AS p_id, p.title, p.hkt_projects, p.git_url,
+            s.id AS s_id, s.description AS s_desc, s.demo_url, s.status, s.fulfilled,
+            d.id AS d_id, d.description AS d_desc, d.image_url
+        FROM projects p
+        LEFT JOIN ships s ON p.id = s.proj_id
+        LEFT JOIN devlogs d ON s.id = d.ship_id
+        WHERE p.user_id = ?
+        """,
+        (userid,)
     ).fetchall():
-        ships = []
-        for ship in conn.execute(
-            "SELECT * FROM ships WHERE proj_id = ?", (proj['id'],)
-        ).fetchall():
-            devlogs = conn.execute(
-                "SELECT * FROM devlogs WHERE ship_id = ?", (ship['id'],)
-            ).fetchall()
-            pass
-        projs.append({
-            "id": proj['id'],
-            "title": proj['title'],
-            "hackatime_projects": proj['hkt_projects'],
-            "git_url": proj['git_url'],
-            "ships": ships
-        })
-    return projs
+        p_id = row['p_id']
+
+        if p_id not in projs:
+            projs[p_id] = {
+                "id": p_id,
+                "title": row['title'],
+                "hackatime_projects": row['hkt_projects'],
+                "git_url": row['git_url'],
+                "ships": {}
+            }
+
+        project = projs[p_id]
+        s_id = row['s_id']
+
+        if s_id is not None:
+            if s_id not in project["ships"]:
+                project["ships"][s_id] = {
+                    "id": s_id,
+                    "description": row['s_desc'],
+                    "demo_url": row['demo_url'],
+                    "status": row['s_status'],
+                    "fulfilled": row['fulfilled'],
+                    "devlogs": []
+                }
+
+            if row['d_id'] is not None:
+                project["ships"][s_id]["devlogs"].append({
+                    "id": row['d_id'],
+                    "description": row['d_desc'],
+                    "image_url": row['image_url'],
+                    "status": row['d_status']
+                })
+
+    for proj in projs.values():
+        proj["ships"] = list(proj["ships"].values())
+    return list(projs.values())
+
 
 ADJS = [
     "autumn", "hidden", "bitter", "misty", "silent", "empty", "dry", "dark",
@@ -180,6 +212,16 @@ def newProject(userid):
         (userid, random.choice(ADJS) + "_" + random.choice(NOUNS))
     )
     conn.commit()
+
+def tryDeleteProject(userid, projId):
+    conn = get_conn()
+    res = conn.execute(
+        "DELETE FROM projects WHERE id = ? AND user_id = ?;",
+        (projId, userid)
+    ).rowcount > 0
+    if res:
+        conn.commit()
+    return res
 
 
 def format(js):
