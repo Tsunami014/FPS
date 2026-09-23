@@ -296,7 +296,7 @@ SCREENS = {
           text: "FPS",
           text_size: 32,
           width: 80,
-          text_style: ["Italics", "Small Caps"],
+          text_style: ["Italics", "Bold"],
         }),
         new Objs.Banner("Banner", {
           text: "STATUS: Not running... yet",
@@ -317,15 +317,6 @@ SCREENS = {
         default: true,
       }),
       new Objs.Page("AboutPage", [
-        new Objs.Section("WhatIsThis", {
-          text: "This is a Hack Club YSWS where YOU create something cool for a game and WE give you games & merch!",
-          max_width: 500,
-        }),
-        new Objs.FAQ("IsThisReal", {
-          question: "Is this for real?",
-          answer: "Yup! Hack Club is a non-profit organisation and a community of 100k+ teenage makers, and we do these kinds of things all the time!",
-          width: 600,
-        }),
         new Objs.Link("HackClubWebsite", {
           text: "Link to the Hack Club website!",
           url: "https://hackclub.com/",
@@ -336,16 +327,28 @@ SCREENS = {
           url: "https://hackclub.com/slack",
           x: 84, rot: 2,
         }),
-        new Objs.FAQ("WhatDoYouMean", {
-          question: "What do you mean, 'something cool for a game'?",
-          answer: `Whatever you like! It could be something simple like a sound effect creator, terrain generator, or something more complex like a physics engine.
-Basically if it is used in the production of a game you'll be fine.
-Build it however complex or easy as you want! You can build everything yourself or use libraries - it's up to you!`,
+        new Objs.Section("WhatIsThis", {
+          text: `This is a Hack Club YSWS where YOU create something cool for a game and WE give you games & merch!
+To participate, you must be 13-19 years old (inclusive) and be verified.`,
+          max_width: 500,
+        }),
+        new Objs.FAQ("IsThisReal", {
+          question: "Is this for real?",
+          answer: "Yup! Hack Club is a non-profit organisation and a community of 100k+ teenage makers, and we do these kinds of things all the time!",
+          width: 600,
+        }),
+        new Objs.FAQ("WhatsForAGame", {
+          question: "What do you mean 'for a game'?",
+          answer: `Anything used in the makings of a game, but not just a game itself.
+ You can do many things, e.g. something hard like terrain generation or a physics simulator,
+ or even something simple like a small program for creating music or art!`.replaceAll('\n',''),
           width: 600,
         }),
         new Objs.FAQ("DoIHaveToBeGood", {
           question: "Do I have to be good at programming?",
-          answer: "Not very, you are free to do whatever difficulty project you want to! And if you want to try something harder or are struggling, feel free to ask on the Slack channel #fps for any help (or just on Slack in general, everyone's pretty nice), we'd love to help you!",
+          answer: `Only a bit; you are free to do whatever difficulty project you want to!
+You can also use existing libraries to handle complexity if you want.
+And if you want to try something harder or are struggling, feel free to ask on the Slack channel #fps for any help (or just on Slack in general, everyone's pretty nice), we'd love to help you!`,
           width: 600,
         }),
         new Objs.Page("ExtraLinks", [
@@ -371,38 +374,18 @@ Build it however complex or easy as you want! You can build everything yourself 
         x: -10, y: 35, rot: -3, scale: 0.9,
         open: true,
       }),
-      new Objs.Page("GetStartedSection", [
+      new Objs.Page("HowToUseThis", [
         new Objs.Text("Title", {
-          text: "Get Started",
+          text: "How to navigate this",
           text_style: ["Bold"],
-          text_size: 34,
+          text_size: 32,
         }),
-        new Objs.Background("Background", {
-          width: 300,
-        }),
-        new Objs.Section("WhoCanJoin", {
-          text: "This is for anyone aged 13-18 (inclusive)",
-        }),
-        new Objs.Section("HowToStart", {
-          // TODO: Finish this and add a link to Slack
-          text: "To get started, join the #fps channel on the Hack Club Slack!",
-          max_width: 500,
-        }),
-        new Objs.Page("HowToUseThis", [
-          new Objs.Text("Title", {
-            text: "How to navigate this",
-            text_style: ["Bold"],
-            text_size: 22,
-          }),
-          new Objs.Section("NavigationTips", {
-            text: `Click on an element in the scene list to select it, double click to inspect it (or if it's a tree branch, expand/contract it).
+        new Objs.Section("NavigationTips", {
+          text: `Click on an element in the scene list to select it, double click to inspect it (or if it's a tree branch, expand/contract it).
 Anything can be inspected by clicking on it and then going to the inspector tab.
 Click on the page to deselect the current element.
 In the inspector tab there are more options that can be revealed by clicking on them (they have a > arrow on the left)`,
-            max_width: 500,
-          }),
-        ], {
-          open: true,
+          max_width: 500,
         }),
       ], {
         x: 200, y: -20, rot: -50,
