@@ -251,8 +251,11 @@ function updateLTabSel() {
 
 const stage = document.getElementById("stage")
 const overl = document.getElementById("overl")
-function setStage(hash) {
+function clearInspector() {
     document.getElementById("inspector").replaceChildren()
+}
+function setStage(hash) {
+    hash = hash ?? location.hash
 
     stage.replaceChildren()
     viewp.replaceChildren(msel)
@@ -280,6 +283,7 @@ function updateTopSel(hash) {
     if (nam) nam = nam.charAt(0).toUpperCase() + nam.slice(1).toLowerCase()
     document.getElementsByTagName("title")[0].innerText = `FPS ${nam}`
     setStage(hash)
+    clearInspector()
 
     setTimeout(() => {
         const def = document.getElementById("default") ?? viewp.lastElementChild
@@ -290,7 +294,8 @@ function updateTopSel(hash) {
 function reloadScene() {
     overl.classList.add("hide")
     updateLTabSel()
-    setStage(location.hash)
+    setStage()
+    clearInspector()
     const def = document.getElementById("default")
     focusOn(null, def, true)
     overl.classList.remove("hide")

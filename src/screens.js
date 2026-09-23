@@ -46,14 +46,14 @@ function loadProjs() {
         )
 
         const projs = (await response.json()).projects
-        const hasprojs = projs && projs.length > 0
         var projlist;
-        if (hasprojs) {
+        if (projs && projs.length > 0) {
           projlist = projs.map(p=>{
-            return new Objs.Page(p.title, [
+            var page = new Objs.Page(p.title, [
               new Objs.Page("DetailsPage", [
                 new Objs.Text("Title", {
                   text: p.title,
+                  text_onchange: (v)=>{ page.name = v; setStage(); }
                 }),
                 new Objs.Link("GitURL", {
                   url: p.git_url,
@@ -83,6 +83,7 @@ function loadProjs() {
                 },
               })
             ])
+            return page
           })
         } else {
           projlist = [new Objs.Text("NothingYet", {
@@ -91,10 +92,7 @@ function loadProjs() {
         }
 
         loadProjs.inf = new Objs.BasePage("Stage", [
-          new Objs.Page("Projects", projlist, {
-            default: hasprojs,
-            open: true,
-          }),
+          ...projlist,
           new Objs.Button("NewProject", {
             text: "New Project",
             btn_onpress: async ()=>{
@@ -118,7 +116,8 @@ function loadProjs() {
             },
           })
         ], {
-          default: !hasprojs,
+          page_gap: 80,
+          default: true,
           open: true,
         })
       } catch (error) {

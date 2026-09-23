@@ -110,6 +110,7 @@ Objs.ScaleMixin = (Base) => class extends Base {
 Objs.Text = class extends Objs.Node2D {
     get _defaults() { return { ...super._defaults,
         text: "Placeholder",
+        text_onchange: null,
         text_size: 18,
         text_font: "Monospace",
         text_style: [],
@@ -156,9 +157,15 @@ Objs.Text = class extends Objs.Node2D {
     get spec() {
         const connval = (nam)=>connectValue(this, nam)
         const cats = this.constructor._catrs
+
+        const txtconnval = connval("text")
+        if (this.attrs.text_onchange !== null) {
+            const tcvbase = txtconnval.conn
+            txtconnval.conn = (v)=>{ this.attrs.text_onchange(v); tcvbase(v); }
+        }
         return [
             { labl: "Text", bubble: true },
-            { labl: "Text", type: "multiline", ...connval("text") },
+            { labl: "Text", type: "multiline", ...txtconnval },
             { labl: "Style", conts: [
                 { labl: "Font size", type: "num", ...connval("text_size"),
                     bound: [8, 100] },
