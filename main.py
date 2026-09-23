@@ -135,6 +135,18 @@ def me(user):
         "balance": user["balance"],
     })
 
+@app.route('/api/projects', methods=['GET', 'PUT'])
+@login_required
+def projects(user):
+    if request.method == 'PUT':
+        admin.newProject(user['id'])
+        return "Done! :)", 201
+
+    projs = admin.getUserProjects(user['id'])
+    return jsonify({
+        "projects": projs
+    })
+
 @app.route('/api/login', methods=['GET'])
 def login():
     args = request.args

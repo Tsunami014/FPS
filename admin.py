@@ -4,8 +4,9 @@ import hashlib
 import time
 import math
 import threading
+import random
 
-DB_PATH = 'users.db'
+DB_PATH = 'main.db'
 _local = threading.local()
 
 def get_conn():
@@ -33,7 +34,29 @@ with sqlite3.connect(DB_PATH, timeout=5.0) as _setup:
         emails TEXT,
         balance INTEGER NOT NULL DEFAULT 0
     );
-    ''')
+    CREATE TABLE IF NOT EXISTS projects (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id INTEGER NOT NULL,
+        title TEXT NOT NULL,
+        git_url TEXT,
+        hkt_projects TEXT
+    );
+    CREATE TABLE IF NOT EXISTS ships (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        proj_id INTEGER NOT NULL,
+        description TEXT,
+        demo_url TEXT,
+        status TEXT,
+        fulfilled INTEGER
+    );
+    CREATE TABLE IF NOT EXISTS devlogs (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        ship_id INTEGER NOT NULL,
+        description TEXT,
+        image_url TEXT,
+        status TEXT
+    );
+''')
 
 def hash_token(tok):
     return hashlib.sha256(tok.encode()).hexdigest()
@@ -100,6 +123,63 @@ def getUserInfo(id):
     return get_conn().execute(
         "SELECT * FROM users WHERE hkt_id = ?", (id,)
     ).fetchone()
+
+def getUserProjects(userid):
+    if userid is None:
+        return None
+    conn = get_conn()
+    projs = []
+    for proj in conn.execute(
+        "SELECT * FROM projects WHERE user_id = ?", (userid,)
+    ).fetchall():
+        ships = []
+        for ship in conn.execute(
+            "SELECT * FROM ships WHERE proj_id = ?", (proj['id'],)
+        ).fetchall():
+            devlogs = conn.execute(
+                "SELECT * FROM devlogs WHERE ship_id = ?", (ship['id'],)
+            ).fetchall()
+            pass
+        projs.append({
+            "id": proj['id'],
+            "title": proj['title'],
+            "hackatime_projects": proj['hkt_projects'],
+            "git_url": proj['git_url'],
+            "ships": ships
+        })
+    return projs
+
+ADJS = [
+    "autumn", "hidden", "bitter", "misty", "silent", "empty", "dry", "dark",
+    "summer", "icy", "delicate", "quiet", "white", "cool", "spring", "winter",
+    "patient", "twilight", "dawn", "crimson", "wispy", "weathered", "blue",
+    "billowing", "broken", "cold", "damp", "falling", "frosty", "green",
+    "long", "late", "lingering", "bold", "little", "morning", "muddy", "old",
+    "red", "rough", "still", "small", "sparkling", "throbbing", "shy",
+    "wandering", "withered", "wild", "black", "young", "holy", "solitary",
+    "fragrant", "aged", "snowy", "proud", "floral", "restless", "divine",
+    "polished", "ancient", "purple", "lively", "nameless"
+]
+NOUNS = [
+    "waterfall", "river", "breeze", "moon", "rain", "wind", "sea", "morning",
+    "snow", "lake", "sunset", "pine", "shadow", "leaf", "dawn", "glitter",
+    "forest", "hill", "cloud", "meadow", "sun", "glade", "bird", "brook",
+    "butterfly", "bush", "dew", "dust", "field", "fire", "flower", "firefly",
+    "feather", "grass", "haze", "mountain", "night", "pond", "darkness",
+    "snowflake", "silence", "sound", "sky", "shape", "surf", "thunder",
+    "violet", "water", "wildflower", "wave", "water", "resonance", "sun",
+    "wood", "dream", "cherry", "tree", "fog", "frost", "voice", "paper",
+    "frog", "smoke", "star"
+]
+def newProject(userid):
+    if userid is None:
+        return None
+    conn = get_conn()
+    conn.execute(
+        "INSERT INTO projects (user_id, title) VALUES (?, ?)",
+        (userid, random.choice(ADJS) + "_" + random.choice(NOUNS))
+    )
+    conn.commit()
 
 
 def format(js):

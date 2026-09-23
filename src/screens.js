@@ -35,45 +35,69 @@ if (localStorage.getItem('adminKey') !== null) {
   }
 }
 
-function loadUserInfo() {
-  if (!loadUserInfo.inf) {
-    loadUserInfo.inf = new Objs.Loading("user info")
+function loadProjs() {
+  if (!loadProjs.inf) {
+    loadProjs.inf = new Objs.Loading("projects")
     ;(async () => {
       try {
         const response = await fetch(
-          "/api/me",
+          "/api/projects",
           { headers: { Authorization: `Bearer ${getTok()}` } }
         )
-        const data = await response.json()
-        loadUserInfo.inf = new Objs.Page("UserInfo", [
-          new Objs.Banner("Username", {
-            text: data.github_username,
-            text_size: 30,
-            text_style: ["Bold", "Small Caps"],
-            background_col: "#DC8ADD",
-            x: -24, y: 10, rot: -2,
+
+        const projs = (await response.json()).projects
+        var projlist;
+        if (projs && projs.length > 0) {
+          projlist = projs.map(p=>{
+            console.log(p)
+            return new Objs.Text("Project", {
+              text: "Placeholder for project; "+p.title,
+            })
+          })
+        } else {
+          projlist = [new Objs.Text("NothingYet", {
+            text: "Nothing here yet!",
+          })]
+        }
+
+        loadProjs.inf = new Objs.BasePage("Stage", [
+          new Objs.Page("Projects", projlist, {
+            default: true,
+            open: true,
           }),
-          new Objs.Text("IDs", {
-            text: `Slack ID: ${data.slack_id}\nHackatime ID: ${data.hackatime_id}`,
-            text_size: 8,
-            x: 120, y: 10, rot: 4,
-          }),
-          new Objs.Text("Emails", {
-            text: "Emails:\n"+data.emails.join('\n'),
-          }),
+          new Objs.Button("NewProject", {
+            text: "New Project",
+            btn_onpress: async ()=>{
+              try {
+                const response2 = await fetch("/api/projects", {
+                  method: 'PUT',
+                  headers: { Authorization: `Bearer ${getTok()}` }
+                })
+                if (response2.status === 201) {
+                  loadProjs.inf = null // Re-fetch projects
+                } else {
+                  console.error(`HTTP error when creating a new project: ${response2.status}`)
+                  loadProjs.inf = new Objs.Error("creating a new project")
+                }
+                reloadScene()
+              } catch (error) {
+                console.error('Failed to create a new project:', error)
+                loadProjs.inf = new Objs.Error("creating a new project")
+                reloadScene()
+              }
+            },
+          })
         ], {
           open: true,
-          page_gap: 10,
-          page_direction: "Column"
         })
       } catch (error) {
-        console.error('Failed to fetch user info:', error)
-        loadUserInfo.inf = new Objs.Error("loading user info")
+        console.error('Failed to fetch projects:', error)
+        loadProjs.inf = new Objs.Error("loading projects")
       }
       reloadScene()
     })()
   }
-  return loadUserInfo.inf
+  return loadProjs.inf
 }
 
 function loadShop() {
@@ -122,18 +146,52 @@ function loadShop() {
   return loadShop.inf
 }
 
+function loadUserInfo() {
+  if (!loadUserInfo.inf) {
+    loadUserInfo.inf = new Objs.Loading("user info")
+    ;(async () => {
+      try {
+        const response = await fetch(
+          "/api/me",
+          { headers: { Authorization: `Bearer ${getTok()}` } }
+        )
+        const data = await response.json()
+        loadUserInfo.inf = new Objs.Page("UserInfo", [
+          new Objs.Banner("Username", {
+            text: data.github_username,
+            text_size: 30,
+            text_style: ["Bold", "Small Caps"],
+            background_col: "#DC8ADD",
+            x: -24, y: 10, rot: -2,
+          }),
+          new Objs.Text("IDs", {
+            text: `Slack ID: ${data.slack_id}\nHackatime ID: ${data.hackatime_id}`,
+            text_size: 8,
+            x: 120, y: 10, rot: 4,
+          }),
+          new Objs.Text("Emails", {
+            text: "Emails:\n"+data.emails.join('\n'),
+          }),
+        ], {
+          open: true,
+          page_gap: 10,
+          page_direction: "Column"
+        })
+      } catch (error) {
+        console.error('Failed to fetch user info:', error)
+        loadUserInfo.inf = new Objs.Error("loading user info")
+      }
+      reloadScene()
+    })()
+  }
+  return loadUserInfo.inf
+}
+
 var extra;
 if (loggedIn()) {
   extra = {
     projects: ["Projects", [
-      new Objs.BasePage("Stage", [
-        new Objs.Text("Text", {
-          text: "Coming soon..!",
-        }),
-      ], {
-        default: true,
-        open: true,
-      }),
+      loadProjs,
     ]],
     shop: ["Shop", [
       new Objs.BasePage("Stage", [
