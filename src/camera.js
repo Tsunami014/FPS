@@ -1,7 +1,3 @@
-/* If you must know, this was SO INCREDIBLY PAINFUL.
- * I used AI but it was SO TERRIBLE.
- * It took me figuring out most of it and it doing the last small fixes for this to actually come together */
-
 function getExtremalBox(elm) {
     var minL = Infinity
     var maxR = -Infinity

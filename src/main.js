@@ -161,8 +161,8 @@ function inspectElm(parent, data) {
     })
 }
 
-const openById = new Map() // Id of page -> is open bool
-const selectedByHash = {} // Hash -> selected item
+const openById = new Map() // Id of page object -> is open bool
+const selectedByHash = {} // Page hash -> [selected item, selected (true) or just zoom (false)]
 let sceneMap = new Map() // Id -> scene element
 
 function deselect() {
@@ -196,7 +196,7 @@ function selectItem(elm, it, isObj, instant=false) {
 function setupClickHandler(elm, it, isObj) {
     elm.onclick = (e)=>{
         if (!elm.classList.contains("scnsel")) e.preventDefault()
-        selectedByHash[(location.hash || "#home").substr(1)] = it.id
+        selectedByHash[(location.hash || "#home").substr(1)] = [it.id, true]
         selectItem(elm, it, isObj)
     }
     if (isObj) {
@@ -268,10 +268,19 @@ function clearInspector() {
     document.getElementById("inspector").replaceChildren()
 }
 function restoreSelection(screenKey) {
-    const wanted = selectedByHash[screenKey]
+    const sel = selectedByHash[screenKey]
+    if (!sel) return false
+    const [wanted, focus] = sel
     const found = wanted && sceneMap.get(wanted)
     if (found) {
-        selectItem(found.elm, found.it, found.isObj, true)
+        if (focus) {
+            selectItem(found.elm, found.it, found.isObj, true)
+        } else {
+            const it = found.it
+            requestAnimationFrame(()=>{
+                focusOn(null, found.isObj & !it.attrs.zoom? it.mainobj.parentElement : it.mainobj, true)
+            })
+        }
         return true
     }
     delete selectedByHash[screenKey]
@@ -363,6 +372,7 @@ function reloadScene() {
     mainStage.addEventListener('click', ()=>{
         deselect()
         focussing.elm = null
+        selectedByHash[(location.hash || "#home").substr(1)][1] = false
     })
 
     // Update the main page for the current page
