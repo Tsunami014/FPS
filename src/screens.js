@@ -37,7 +37,8 @@ if (localStorage.getItem('adminKey') !== null) {
 
 function loadUserInfo() {
   if (!loadUserInfo.inf) {
-    (async () => {
+    loadUserInfo.inf = new Objs.Loading("user info")
+    ;(async () => {
       try {
         const response = await fetch(
           "/api/me",
@@ -71,9 +72,54 @@ function loadUserInfo() {
       }
       reloadScene()
     })()
-    loadUserInfo.inf = new Objs.Loading("user info")
   }
   return loadUserInfo.inf
+}
+
+function loadShop() {
+  if (!loadShop.inf) {
+    loadShop.inf = new Objs.Loading("user shop info")
+    ;(async () => {
+      try {
+        const response = await fetch(
+          "/api/me",
+          { headers: { Authorization: `Bearer ${getTok()}` } }
+        )
+        const data = await response.json()
+
+        var orders = new Objs.Text("NothingYet", {
+          text: "Nothing here yet!",
+        })
+
+        loadShop.inf = new Objs.Page("DashboardPage", [
+          new Objs.Balance(data.balance, {
+            zoom: true,
+            scale: 1.35,
+          }),
+          new Objs.Page("OrdersPage", [
+            new Objs.Text("Title", {
+              text: "Your orders",
+              text_size: 25,
+              text_style: ["Bold"],
+            }),
+            orders,
+          ], {
+            scale: 0.95,
+          }),
+        ], {
+          page_gap: 40,
+          default: true,
+          open: true,
+          rot: 10,
+        })
+      } catch (error) {
+        console.error('Failed to fetch user shop info:', error)
+        loadShop.inf = new Objs.Error("loading user shop info")
+      }
+      reloadScene()
+    })()
+  }
+  return loadShop.inf
 }
 
 var extra;
@@ -91,28 +137,7 @@ if (loggedIn()) {
     ]],
     shop: ["Shop", [
       new Objs.BasePage("Stage", [
-        new Objs.Page("DashboardPage", [
-          new Objs.Balance({
-            zoom: true,
-          }),
-          new Objs.Page("OrdersPage", [
-            new Objs.Text("Text", {
-              text: "Your orders",
-              text_size: 22,
-              text_style: ["Bold"],
-            }),
-            new Objs.Text("Text", {
-              text: "Nothing here yet!",
-            }),
-          ], {
-            open: true,
-          }),
-        ], {
-          page_gap: 40,
-          default: true,
-          open: true,
-          rot: 10,
-        }),
+        loadShop,
         new Objs.Page("ShopItemsPage", [
           new Objs.Shop("Test", {
             title: "Testing shop item!",

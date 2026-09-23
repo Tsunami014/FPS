@@ -282,7 +282,7 @@ function updateTopSel(hash) {
     setStage(hash)
 
     setTimeout(() => {
-        const def = document.getElementById("default")
+        const def = document.getElementById("default") ?? viewp.lastElementChild
         focusOn(null, def, true)
         overl.classList.remove("hide")
     }, 100)

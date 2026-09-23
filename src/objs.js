@@ -83,6 +83,26 @@ Objs.Node2D = class extends Objs.Base {
         ]
     }
 }
+Objs.ScaleMixin = (Base) => class extends Base {
+    get _defaults() { return { ...super._defaults,
+        scale: 1,
+    }}
+
+    _style(elm) {
+        super._style(elm)
+        elm.style.scale = this.attrs.scale
+    }
+
+    get spec() {
+        const connval = (nam)=>connectValue(this, nam)
+        return [...super.spec,
+            { labl: "Scale", conts: [
+                { labl: "Scale", type: "num", ...connval("scale"),
+                    step: 0.02 },
+            ]},
+        ]
+    }
+};
 
 // -----
 
@@ -479,27 +499,7 @@ Objs.BasePage = class extends Objs.PageMixin(Objs.Base) {
         return super.spec.slice(0, -1)
     }
 }
-Objs.Page = class extends Objs.PageMixin(Objs.Node2D) {
-    get _defaults() { return { ...super._defaults,
-        scale: 1,
-    }}
-
-    _style(elm) {
-        super._style(elm)
-        const attrs = this.attrs
-        elm.style.scale = attrs.scale
-    }
-
-    get spec() {
-        const connval = (nam)=>connectValue(this, nam)
-        return [...super.spec,
-            { labl: "Scale", conts: [
-                { labl: "Scale", type: "num", ...connval("scale"),
-                    step: 0.02 },
-            ]},
-        ]
-    }
-}
+Objs.Page = Objs.ScaleMixin(Objs.PageMixin(Objs.Node2D))
 
 // -----
 
@@ -621,9 +621,9 @@ Objs.Error = class extends Objs.Text {
     static cls = "error"
 }
 
-Objs.Balance = class extends Objs.Text {
-    constructor(xtra) { super("Balance", {
-        text: `You have xx currency`,
+Objs.Balance = class extends Objs.ScaleMixin(Objs.Text) {
+    constructor(amnt, xtra) { super("Balance", {
+        text: `You are running at\n${amnt} FPS`,
         text_style: ["Small Caps"],
         ...xtra
     }) }
