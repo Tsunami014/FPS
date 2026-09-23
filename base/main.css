@@ -244,6 +244,7 @@ details[open] > summary::before { content: "● "; }
 .obj_link::before { content: "↪ "; }
 .obj_balnc::before { content: "$ "; }
 .obj_shopit::before { content: "⚱ "; }
+.obj_setting::before { content: "⚙ "; }
 
 details.regular > summary::before { content: "› "; }
 details[open].regular > summary::before { content: "ᵛ "; }

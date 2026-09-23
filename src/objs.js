@@ -1,7 +1,10 @@
-function connectValue(obj, name) {
+function connectValue(obj, name, onchngname) {
     return {
         value: obj.attrs[name],
         conn(v) {
+            if (onchngname && obj.attrs[onchngname]) {
+                obj.attrs[onchngname](v)
+            }
             obj.attrs[name] = v
             obj._style(obj.mainobj)
             updFocus()
@@ -167,17 +170,12 @@ Objs.Text = class extends Objs.Node2D {
         ]
     }
     get spec() {
-        const connval = (nam)=>connectValue(this, nam)
+        const connval = (nam, ocn)=>connectValue(this, nam, ocn)
         const cats = this.constructor._catrs
 
-        const txtconnval = connval("text")
-        if (this.attrs.text_onchange !== null) {
-            const tcvbase = txtconnval.conn
-            txtconnval.conn = (v)=>{ this.attrs.text_onchange(v); tcvbase(v); }
-        }
         return [
             { labl: "Text", bubble: true },
-            { labl: "Text", type: "multiline", ...txtconnval },
+            { labl: "Text", type: "multiline", ...connval("text", "text_onchange") },
             { labl: "Style", conts: [
                 { labl: "Font size", type: "num", ...connval("text_size"),
                     bound: [8, 100] },
@@ -647,4 +645,35 @@ Objs.Balance = class extends Objs.ScaleMixin(Objs.Text) {
         ...xtra
     }) }
     static cls = "balnc"
+}
+
+Objs.HktProjs = class extends Objs.Node2D {
+    get _defaults() { return { ...super._defaults,
+        hkt_projs: [],
+        all_projs: [],
+    }}
+    _makeObject() {
+        const elm = document.createElement("p")
+        this._style(elm)
+        return elm
+    }
+    _style(elm) {
+        super._style(elm)
+        elm.style.whiteSpace = "preserve"
+        elm.innerText = this.attrs.hkt_projs.map(it=>' '+it).join('\n') || " No projects selected!"
+        elm.prepend(document.createElement('br'))
+        const tit = document.createElement('b')
+        tit.innerText = "Hackatime projects:"
+        elm.prepend(tit)
+    }
+    get spec() {
+        const connval = (nam, ocn)=>connectValue(this, nam, ocn)
+
+        return [
+            { labl: "Text", bubble: true },
+            { labl: "Hackatime Projects", type: "multiopts", ...connval("hkt_projs"),
+                choices: this.attrs.all_projs },
+        null, ...super.spec]
+    }
+    static cls = "setting"
 }

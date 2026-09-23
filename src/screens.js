@@ -35,6 +35,41 @@ if (localStorage.getItem('adminKey') !== null) {
   }
 }
 
+var all_hkt_projs;
+function loadHktProjs(p, id) {
+return ()=>{
+  if (all_hkt_projs === undefined) {
+    all_hkt_projs = -1
+    ;(async () => {
+      try {
+        const response = await fetch(
+          "https://hackatime.hackclub.com/api/v1/authenticated/projects",
+          { headers: { Authorization: `Bearer ${getTok()}` } }
+        )
+        const json = await response.json()
+        all_hkt_projs = json.projects.map(it=>`${it.name} (${(it.total_seconds/3600).toFixed(1)}h)`)
+      } catch (error) {
+        console.error('Failed to fetch Hackatime projects:', error)
+        all_hkt_projs = -2
+      }
+      reloadScene()
+    })()
+  }
+  if (all_hkt_projs === -1) {
+    return new Objs.Loading("Hackatime projects")
+  }
+  if (all_hkt_projs === -2) {
+    return new new Objs.Error("loading Hackatime projects")
+  }
+  if (!loadHktProjs.inf) {
+    loadHktProjs.inf = new Objs.HktProjs("HackatimeProjects", {
+      hkt_projs: p.hackatime_projects ?? [],
+      all_projs: all_hkt_projs,
+    }, id)
+  }
+  return loadHktProjs.inf
+}}
+
 function loadProjs() {
   if (!loadProjs.inf) {
     loadProjs.inf = new Objs.Loading("projects")
@@ -61,13 +96,19 @@ function loadProjs() {
                   }
                 }, pid+'.t'),
                 new Objs.Link("GitURL", {
-                  url: p.git_url,
+                  url: p.git_url || "https://...",
+                  text: "Git URL"
                 }, pid+'.g'),
-                // TODO: Hackatime project select
-              ], {}, pid+'.dp'),
+                loadHktProjs(p, pid+'.hktprojs'),
+              ], {
+                open: true,
+              }, pid+'.dp'),
               new Objs.Button("DeleteProject", {
                 text: `Delete Project '${p.title}'`,
                 btn_onpress: async ()=>{
+                  if (confirm(`Are you sure you want to delete your project '${p.title}'?`)) {
+                    logout()
+                  }
                   try {
                     const response2 = await fetch("/api/projects?id="+p.id, {
                       method: 'DELETE',
