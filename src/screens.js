@@ -36,6 +36,7 @@ if (localStorage.getItem('adminKey') !== null) {
 }
 
 var all_hkt_projs;
+const hktProjObjs = new Map() // project id -> hackatime project list object
 function loadHktProjs(p, id) {
 return ()=>{
   if (all_hkt_projs === undefined) {
@@ -59,15 +60,17 @@ return ()=>{
     return new Objs.Loading("Hackatime projects")
   }
   if (all_hkt_projs === -2) {
-    return new new Objs.Error("loading Hackatime projects")
+    return new Objs.Error("loading Hackatime projects")
   }
-  if (!loadHktProjs.inf) {
-    loadHktProjs.inf = new Objs.HktProjs("HackatimeProjects", {
+  var pobj = hktProjObjs.get(p.id)
+  if (!pobj) {
+    pobj = new Objs.HktProjs("HackatimeProjects", {
       hkt_projs: p.hackatime_projects ?? [],
       all_projs: all_hkt_projs,
     }, id)
+    hktProjObjs.set(p.id, pobj)
   }
-  return loadHktProjs.inf
+  return pobj
 }}
 
 function loadProjs() {
@@ -106,8 +109,8 @@ function loadProjs() {
               new Objs.Button("DeleteProject", {
                 text: `Delete Project '${p.title}'`,
                 btn_onpress: async ()=>{
-                  if (confirm(`Are you sure you want to delete your project '${p.title}'?`)) {
-                    logout()
+                  if (!confirm(`Are you sure you want to delete your project '${p.title}'?`)) {
+                    return;
                   }
                   try {
                     const response2 = await fetch("/api/projects?id="+p.id, {
