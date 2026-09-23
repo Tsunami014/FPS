@@ -11,11 +11,23 @@ function connectValue(obj, name) {
 
 const Objs = {}
 
+{const lut = Array.from({ length: 256 }, (_, i) => i.toString(16).padStart(2, '0'));
+Objs.newUID = function() {
+  const d0 = (Math.random() * 0xffffffff) | 0;
+  const d1 = (Math.random() * 0xffffffff) | 0;
+
+  return ("_" +
+    lut[d0 & 0xff] + lut[(d0 >> 8) & 0xff] + lut[(d0 >> 16) & 0xff] + lut[(d0 >> 24) & 0xff] + '-' +
+    lut[d1 & 0xff] + lut[(d1 >> 8) & 0xff] + lut[(d1 >> 16) & 0xff] + lut[(d1 >> 24) & 0xff]
+  );
+}}
+
 Objs.Base = class {
     static isObj = true
     static isInvis = false
-    constructor(name, attrs) {
+    constructor(name, attrs, id) {
         this.name = name
+        this.id = id ?? Objs.newUID()
         this.attrs = { ...this._defaults, ...attrs }
     }
     static get _catrs() { return {} }
@@ -432,8 +444,8 @@ Objs.FAQ = class extends Objs.Node2D {
 
 Objs.PageMixin = (Base) => class extends Base {
     static isObj = false
-    constructor(name, conts, attrs) {
-        super(name, attrs)
+    constructor(name, conts, attrs, id) {
+        super(name, attrs, id)
         this.conts = conts
         this.open = attrs?.open
     }

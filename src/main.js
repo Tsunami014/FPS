@@ -161,40 +161,43 @@ function inspectElm(parent, data) {
     })
 }
 
+const openById = new Map() // Id of page -> is open bool
+const selectedByHash = {} // Hash -> selected item
+let sceneMap = new Map() // Id -> scene element
+
 function deselect() {
     const oldsel = document.querySelector('.scnsel')
     if (oldsel) oldsel.classList.remove("scnsel")
     msel.style.display = "none"
 }
+function selectItem(elm, it, isObj, instant=false) {
+    const sd = it.sceneDef
+    const insp = document.getElementById("inspector")
+    insp.replaceChildren()
+
+    const titl = document.createElement("div")
+    titl.innerText = sd.labl
+    titl.classList.add("insptitle")
+    titl.classList.add("obj_"+sd.class)
+    insp.appendChild(titl)
+    if (sd.spec) inspectElm(insp, sd.spec)
+
+    deselect()
+    elm.classList.add("scnsel")
+    if (it.constructor.isInvis) {
+        document.getElementById("side").className = "displinsp"
+        updateLTabSel()
+    } else {
+        requestAnimationFrame(()=>{
+            focusOn(it.mainobj, isObj & !it.attrs.zoom? it.mainobj.parentElement : it.mainobj, instant)
+        })
+    }
+}
 function setupClickHandler(elm, it, isObj) {
     elm.onclick = (e)=>{
-        if (!elm.classList.contains("scnsel")) {
-            e.preventDefault()
-        }
-        const sd = it.sceneDef
-
-        const insp = document.getElementById("inspector")
-        insp.replaceChildren()
-
-        const titl = document.createElement("div")
-        titl.innerText = sd.labl
-        titl.classList.add("insptitle")
-        titl.classList.add("obj_"+sd.class)
-        insp.appendChild(titl)
-
-        if (sd.spec) inspectElm(insp, sd.spec)
-
-        deselect()
-        elm.classList.add("scnsel")
-        if (it.constructor.isInvis) {
-            // Instantly go to the inspector
-            document.getElementById("side").className = "displinsp"
-            updateLTabSel()
-        } else {
-            requestAnimationFrame(()=>{
-                focusOn(it.mainobj, isObj & !it.attrs.zoom? it.mainobj.parentElement : it.mainobj)
-            })
-        }
+        if (!elm.classList.contains("scnsel")) e.preventDefault()
+        selectedByHash[(location.hash || "#home").substr(1)] = it.id
+        selectItem(elm, it, isObj)
     }
     if (isObj) {
         elm.ondblclick = ()=>{
@@ -204,11 +207,11 @@ function setupClickHandler(elm, it, isObj) {
         }
     }
 }
+
 function loadTree(tree, data, parentStage) {
     data.forEach(it=>{
-        if (typeof it === 'function') {
-            it = it()
-        }
+        if (typeof it === 'function') it = it()
+
         if (it.constructor.isObj) {
             parentStage.appendChild(it.mainobj)
             const sd = it.sceneDef
@@ -218,15 +221,25 @@ function loadTree(tree, data, parentStage) {
             elm.innerText = sd.labl
             setupClickHandler(elm, it, true)
             tree.appendChild(elm)
+            sceneMap.set(it.id, { elm, it, isObj: true })
         } else {
             const newtree = document.createElement("details")
-            newtree.open = it.open
+
+            if (!openById.has(it.id)) {
+                openById.set(it.id, !!it.open)
+            }
+            newtree.open = openById.get(it.id)
+            newtree.addEventListener('toggle', ()=>{
+                openById.set(it.id, newtree.open)
+            })
+
             const labl = document.createElement("summary")
             labl.innerText = it.name
             newtree.appendChild(labl)
             parentStage.appendChild(it.mainobj)
             it.mainobj.replaceChildren()
             setupClickHandler(labl, it, false)
+            sceneMap.set(it.id, { elm: labl, it, isObj: false })
             loadTree(newtree, it.conts, it.mainobj)
             tree.appendChild(newtree)
         }
@@ -254,14 +267,28 @@ const overl = document.getElementById("overl")
 function clearInspector() {
     document.getElementById("inspector").replaceChildren()
 }
+function restoreSelection(screenKey) {
+    const wanted = selectedByHash[screenKey]
+    const found = wanted && sceneMap.get(wanted)
+    if (found) {
+        selectItem(found.elm, found.it, found.isObj, true)
+        return true
+    }
+    delete selectedByHash[screenKey]
+    return false
+}
+
 function setStage(hash) {
-    hash = hash ?? location.hash
+    hash = hash ?? (location.hash || "#home")
 
     stage.replaceChildren()
     viewp.replaceChildren(msel)
     var scrn = SCREENS[hash.substr(1)]
     if (!scrn) scrn = SCREENS["404"]
+
+    sceneMap = new Map()
     loadTree(stage, scrn[1], viewp)
+    return restoreSelection(hash.substr(1))
 }
 function updateTopSel(hash) {
     overl.classList.add("hide")
@@ -282,22 +309,28 @@ function updateTopSel(hash) {
     var nam = SCREENS[hash.substr(1)][0] || hash.substr(1)
     if (nam) nam = nam.charAt(0).toUpperCase() + nam.slice(1).toLowerCase()
     document.getElementsByTagName("title")[0].innerText = `FPS ${nam}`
-    setStage(hash)
-    clearInspector()
+
+    const restored = setStage(hash)
+    if (!restored) clearInspector()
 
     setTimeout(() => {
-        const def = document.getElementById("default") ?? viewp.lastElementChild
-        focusOn(null, def, true)
+        if (!restored) {
+            const def = document.getElementById("default") ?? viewp.lastElementChild
+            focusOn(null, def, true)
+        }
         overl.classList.remove("hide")
     }, 100)
 }
+
 function reloadScene() {
     overl.classList.add("hide")
     updateLTabSel()
-    setStage()
-    clearInspector()
-    const def = document.getElementById("default")
-    focusOn(null, def, true)
+    const restored = setStage()
+    if (!restored) {
+        clearInspector()
+        const def = document.getElementById("default")
+        focusOn(null, def, true)
+    }
     overl.classList.remove("hide")
 }
 

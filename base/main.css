@@ -22,6 +22,12 @@ body.mobile {
     grid-template-rows: auto 1fr 1fr;
 }
 
+summary, .obj, #top > a, #side > header > button {
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
 #top {
     grid-column: 1 / -1; /* Span all columns */
     background: #333;
@@ -191,12 +197,6 @@ details.regular > summary { background-color: #AAA; }
 details.regular > summary:hover { background-color: #AFAFAF; }
 .scnsel { background-color: #AA9 !important; }
 .scnsel:hover { background-color: #998 !important; }
-
-summary, .obj {
-    -webkit-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-}
 
 /* Vertical connecting line */
 .tree details::before, .regular::before {

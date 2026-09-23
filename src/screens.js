@@ -49,17 +49,22 @@ function loadProjs() {
         var projlist;
         if (projs && projs.length > 0) {
           projlist = projs.map(p=>{
+            const pid = `proj.${p.id}`
             var page = new Objs.Page(p.title, [
               new Objs.Page("DetailsPage", [
                 new Objs.Text("Title", {
                   text: p.title,
-                  text_onchange: (v)=>{ page.name = v; setStage(); }
-                }),
+                  text_onchange: (v)=>{
+                    page.name = v
+                    const found = sceneMap.get(pid)
+                    if (found) found.elm.innerText = v
+                  }
+                }, pid+'.t'),
                 new Objs.Link("GitURL", {
                   url: p.git_url,
-                }),
+                }, pid+'.g'),
                 // TODO: Hackatime project select
-              ]),
+              ], {}, pid+'.dp'),
               new Objs.Button("DeleteProject", {
                 text: `Delete Project '${p.title}'`,
                 btn_onpress: async ()=>{
@@ -81,14 +86,14 @@ function loadProjs() {
                     reloadScene()
                   }
                 },
-              })
-            ])
+              }, pid+'.d')
+            ], {}, pid)
             return page
           })
         } else {
           projlist = [new Objs.Text("NothingYet", {
             text: "Nothing here yet!",
-          })]
+          }, "proj.no")]
         }
 
         loadProjs.inf = new Objs.BasePage("Stage", [
@@ -114,12 +119,12 @@ function loadProjs() {
                 reloadScene()
               }
             },
-          })
+          }, "proj.new")
         ], {
           page_gap: 80,
           default: true,
           open: true,
-        })
+        }, "proj")
       } catch (error) {
         console.error('Failed to fetch projects:', error)
         loadProjs.inf = new Objs.Error("loading projects")
@@ -143,19 +148,19 @@ function loadShop() {
 
         var orders = new Objs.Text("NothingYet", {
           text: "Nothing here yet!",
-        })
+        }, "shop.ordr.no")
 
         loadShop.inf = new Objs.Page("DashboardPage", [
           new Objs.Balance(data.balance, {
             zoom: true,
             scale: 1.35,
-          }),
+          }, "shop.bal"),
           new Objs.Page("OrdersPage", [
             new Objs.Text("Title", {
               text: "Your orders",
               text_size: 25,
               text_style: ["Bold"],
-            }),
+            }, "shop.ordr.t"),
             orders,
           ], {
             scale: 0.95,
@@ -165,7 +170,7 @@ function loadShop() {
           default: true,
           open: true,
           rot: 10,
-        })
+        }, "shop.dash")
       } catch (error) {
         console.error('Failed to fetch user shop info:', error)
         loadShop.inf = new Objs.Error("loading user shop info")
@@ -193,20 +198,20 @@ function loadUserInfo() {
             text_style: ["Bold", "Small Caps"],
             background_col: "#DC8ADD",
             x: -24, y: 10, rot: -2,
-          }),
+          }, "user.n"),
           new Objs.Text("IDs", {
             text: `Slack ID: ${data.slack_id}\nHackatime ID: ${data.hackatime_id}`,
             text_size: 8,
             x: 120, y: 10, rot: 4,
-          }),
+          }, "user.i"),
           new Objs.Text("Emails", {
             text: "Emails:\n"+data.emails.join('\n'),
-          }),
+          }, "user.em"),
         ], {
           open: true,
           page_gap: 10,
           page_direction: "Column"
-        })
+        }, "user")
       } catch (error) {
         console.error('Failed to fetch user info:', error)
         loadUserInfo.inf = new Objs.Error("loading user info")
