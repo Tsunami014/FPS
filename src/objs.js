@@ -549,6 +549,19 @@ Objs.Button = class extends Objs.Node2D {
     }
     static cls = "btn"
 }
+Objs.HiddenButton = class extends Objs.Blank {
+    get _defaults() { return { ...super._defaults,
+        label: "Placeholder",
+        btn_onpress: ()=>{},
+    }}
+    get spec() {
+        return [
+            { labl: "Danger Button", bubble: true },
+            { labl: this.attrs.label, type: "btn", conn: this.attrs.btn_onpress },
+        null, ...super.spec]
+    }
+    static cls = "btn"
+}
 
 Objs.Shop = class extends Objs.Node2D {
     get _defaults() { return { ...super._defaults,

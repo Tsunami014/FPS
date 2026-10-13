@@ -57,7 +57,11 @@ return ()=>{
     })()
   }
   if (all_hkt_projs === -1) {
-    return new Objs.Loading("Hackatime projects")
+    const projs = p.hackatime_projects ?? []
+    return new Objs.HktProjs("HackatimeProjects...", {
+      hkt_projs: projs,
+      all_projs: [...projs, "..."],
+    }, id)
   }
   if (all_hkt_projs === -2) {
     return new Objs.Error("loading Hackatime projects")
@@ -106,8 +110,8 @@ function loadProjs() {
               ], {
                 open: true,
               }, pid+'.dp'),
-              new Objs.Button("DeleteProject", {
-                text: `Delete Project '${p.title}'`,
+              new Objs.HiddenButton("DeleteProject", {
+                label: `Delete Project '${p.title}'`,
                 btn_onpress: async ()=>{
                   if (!confirm(`Are you sure you want to delete your project '${p.title}'?`)) {
                     return;
